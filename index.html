@@ -3,84 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fini-Pose 3D - La Fenêtre Cannoise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Fini-Pose 3D | Studio LFC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        /* === CSS : Le Design === */
+        /* === CSS : Design Architectural Minimaliste === */
         :root {
-            --primary-color: #0056b3; /* Bleu pro */
-            --secondary-color: #ff7f50; /* Orange dynamique (bâtiment) */
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333;
+            --bg-light: #FAFAFA;
+            --bg-white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-muted: #757575;
+            --accent-color: #B8A892; /* Beige sable / Taupe clair */
+            --border-color: #E0E0E0;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            font-weight: 300;
         }
 
+        /* En-tête (Header) */
         header {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--bg-white);
             width: 100%;
-            padding: 20px 0;
+            padding: 40px 0;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 400;
+            letter-spacing: 2px;
             margin: 0;
-            font-size: 24px;
+            text-transform: uppercase;
         }
 
         header p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            opacity: 0.8;
+            margin: 10px 0 0 0;
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
         }
 
         .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 20px auto;
+            width: 100%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
-        /* Système d'onglets (Tabs) */
+        /* Navigation Minimaliste */
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
         }
 
         .tab-btn {
-            background-color: #ddd;
+            background: none;
             border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s;
+            padding: 10px 0;
+            position: relative;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background-color: var(--text-dark);
+            transition: width 0.3s ease;
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background-color: var(--secondary-color);
-            color: white;
+            color: var(--text-dark);
+        }
+
+        .tab-btn.active::after {
+            width: 100%;
         }
 
         /* Contenu des modules */
         .module-content {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.6s ease-in-out;
         }
 
         .module-content.active {
@@ -88,187 +117,265 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cartes (Cards) pour chaque sous-section */
+        /* Sections / Blocs */
         .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--primary-color);
+            background: var(--bg-white);
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--accent-color);
+            margin-right: 15px;
+            font-style: italic;
         }
 
         .card h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0;
         }
 
-        /* Boutons d'action internes */
-        .action-btn {
-            background-color: var(--primary-color);
-            color: white;
+        /* Formulaires style Architecture (lignes fines) */
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'Montserrat', sans-serif;
             font-size: 14px;
+            color: var(--text-dark);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid var(--text-dark);
+        }
+
+        /* Boutons "Ghost" élégants */
+        .action-btn {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-dark);
+            padding: 14px 24px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            width: max-content;
         }
 
         .action-btn:hover {
-            background-color: #004494;
+            background-color: var(--text-dark);
+            color: var(--bg-white);
         }
 
-        .alert-btn {
-            background-color: #e74c3c;
+        .btn-accent {
+            background-color: var(--text-dark);
+            color: var(--bg-white);
+            border-color: var(--text-dark);
         }
 
-        /* Formulaires basiques */
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .btn-accent:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
         }
 
-        /* Simulation de l'écran téléphone pour le client */
+        /* Simulation Smartphone Épurée */
         .phone-mockup {
-            border: 8px solid #333;
-            border-radius: 30px;
-            padding: 20px;
-            max-width: 300px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 280px;
             margin: 0 auto;
-            background: white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: var(--bg-light);
+            text-align: center;
         }
 
+        .phone-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        /* Jauge minimaliste (Timeline) */
         .jauge {
             width: 100%;
-            background-color: #eee;
-            border-radius: 10px;
-            height: 20px;
-            margin-bottom: 15px;
+            background-color: var(--border-color);
+            height: 2px;
+            margin: 30px 0;
+            position: relative;
         }
 
         .jauge-fill {
             width: 60%;
-            background-color: #2ecc71;
+            background-color: var(--text-dark);
             height: 100%;
-            border-radius: 10px;
-            text-align: center;
-            color: white;
-            font-size: 12px;
-            line-height: 20px;
+            position: relative;
+        }
+
+        .jauge-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--text-dark);
+            border-radius: 50%;
+        }
+        
+        #scan-result {
+            font-size: 13px;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Fini-Pose 3D 🛠️</h1>
-        <p>L'application zéro attente par La Fenêtre Cannoise</p>
+        <h1>Fini-Pose 3D</h1>
+        <p>Studio La Fenêtre Cannoise</p>
     </header>
 
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="openModule('metreur')">📏 Mod. 1 : Métreur</button>
-            <button class="tab-btn" onclick="openModule('poseur')">🪚 Mod. 2 : Poseur</button>
-            <button class="tab-btn" onclick="openModule('client')">📱 Mod. 3 : Client</button>
+            <button class="tab-btn active" onclick="openModule('metreur')">01. Métreur</button>
+            <button class="tab-btn" onclick="openModule('poseur')">02. Poseur</button>
+            <button class="tab-btn" onclick="openModule('client')">03. Espace Client</button>
         </div>
 
         <div id="metreur" class="module-content active">
-            <h2>Interface "Métreur" - 1ère visite</h2>
-            
             <div class="card">
-                <h3>👤 Dossier Client</h3>
-                <input type="text" placeholder="Nom du client (ex: Dupont)">
-                <input type="text" placeholder="Adresse du chantier">
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Dossier Projet</h3>
+                </div>
+                <input type="text" placeholder="Maître d'ouvrage (Nom du client)">
+                <input type="text" placeholder="Lieu d'intervention">
                 <select>
-                    <option>Type de projet...</option>
-                    <option>Rénovation</option>
-                    <option>Dépose totale</option>
+                    <option>Nature des travaux...</option>
+                    <option>Rénovation Globale</option>
+                    <option>Dépose Totale</option>
                 </select>
-                <button class="action-btn">Créer le chantier</button>
+                <button class="action-btn">Initialiser le projet</button>
             </div>
 
             <div class="card">
-                <h3>📸 Acquisition des données</h3>
-                <button class="action-btn" onclick="simulateScan()">Activer la caméra LiDAR (Scan 3D)</button>
-                <p id="scan-result" style="display:none; color: green;">✅ Modélisation 3D générée en temps réel.</p>
-                <button class="action-btn alert-btn">Lire les alertes IA (Faux aplombs)</button>
+                <div class="card-header">
+                    <span class="step-number">II.</span>
+                    <h3>Acquisition Spatiale (LiDAR)</h3>
+                </div>
+                <button class="action-btn btn-accent" onclick="simulateScan()">Lancer le Scan 3D</button>
+                <p id="scan-result" style="display:none; color: var(--accent-color);">Analyse topographique en cours...</p>
+                <button class="action-btn" style="border-color: #D32F2F; color: #D32F2F;">Consulter les anomalies (Faux aplombs)</button>
             </div>
 
             <div class="card">
-                <h3>⚙️ Traitement & Commande</h3>
+                <div class="card-header">
+                    <span class="step-number">III.</span>
+                    <h3>Ingénierie & Commande</h3>
+                </div>
                 <select>
-                    <option>Sélectionner la gamme...</option>
-                    <option>Normabaie Innovax Alu</option>
-                    <option>VEKA Softline</option>
+                    <option>Sélection du profilé architectural...</option>
+                    <option>Normabaie Innovax Aluminium</option>
+                    <option>VEKA Softline PVC</option>
                 </select>
-                <button class="action-btn">Générer la nomenclature (Calcul IA)</button>
-                <button class="action-btn" style="background-color: var(--secondary-color);">Exporter la commande groupée (Prodevis)</button>
+                <button class="action-btn">Générer la nomenclature IA</button>
+                <button class="action-btn btn-accent">Transmettre vers Prodevis</button>
             </div>
         </div>
 
         <div id="poseur" class="module-content">
-            <h2>Interface "Poseur" - Sur le chantier</h2>
-            
             <div class="card">
-                <h3>📂 Suivi de Chantier</h3>
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Identification du site</h3>
+                </div>
                 <select>
-                    <option>Ouvrir le dossier du chantier en cours...</option>
-                    <option>Client : Dupont - Rénovation Cannes</option>
+                    <option>Sélectionner le chantier actif...</option>
+                    <option>Projet Dupont - Villa Cannes</option>
                 </select>
             </div>
 
             <div class="card">
-                <h3>📐 Vérification & Mesure</h3>
-                <button class="action-btn" onclick="alert('Scan du cadre en cours...')">Lancer le "Scan de Contrôle"</button>
-                <button class="action-btn">Générer le plan de coupe (Cotes exactes)</button>
+                <div class="card-header">
+                    <span class="step-number">II.</span>
+                    <h3>Relevé Post-Pose</h3>
+                </div>
+                <button class="action-btn btn-accent" onclick="alert('Acquisition du cadre en cours...')">Scan de Contrôle (Cadre posé)</button>
+                <button class="action-btn">Extraire le plan de coupe (Génération PDF)</button>
             </div>
 
             <div class="card">
-                <h3>🛠️ Action & Communication</h3>
-                <button class="action-btn">Option A : Mode Découpe sur place</button>
-                <button class="action-btn" style="background-color: var(--secondary-color);">Option B : Commande en 1 clic (Atelier)</button>
-                <textarea rows="3" placeholder="Ajouter des notes pour l'atelier..."></textarea>
-                <button class="action-btn">Ajouter une photo du chantier</button>
+                <div class="card-header">
+                    <span class="step-number">III.</span>
+                    <h3>Exécution</h3>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="action-btn">Mode Façonnage (Sur site)</button>
+                    <button class="action-btn btn-accent">Requête Atelier (Commande 1 clic)</button>
+                </div>
+                <textarea rows="2" placeholder="Prescriptions techniques pour l'atelier..."></textarea>
             </div>
         </div>
 
         <div id="client" class="module-content">
-            <h2>Interface "Réassurance" - Suivi des finitions</h2>
-            
             <div class="card">
-                <h3>🏢 Côté La Fenêtre Cannoise (Entreprise)</h3>
-                <button class="action-btn">Générer un accès client sécurisé</button>
-                <button class="action-btn">Envoyer la notification (SMS/E-mail)</button>
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Administration LFC</h3>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button class="action-btn">Générer clé d'accès</button>
+                    <button class="action-btn btn-accent">Notifier le maître d'ouvrage</button>
+                </div>
                 <select>
-                    <option>Mettre à jour le statut...</option>
-                    <option>Habillages en cours de fabrication</option>
-                    <option>Habillages expédiés</option>
-                    <option>Rendez-vous de pose finale fixé</option>
+                    <option>Actualiser l'état d'avancement...</option>
+                    <option>1. Profilés en façonnage (Atelier)</option>
+                    <option>2. Contrôle qualité & Expédition</option>
+                    <option>3. Planification de l'intervention</option>
                 </select>
             </div>
 
-            <div class="card">
-                <h3>🛋️ Côté Client (Simulation Smartphone)</h3>
+            <div class="card" style="background-color: var(--bg-light); border: none;">
+                <div class="card-header" style="justify-content: center;">
+                    <span class="step-number" style="font-size: 16px;">II.</span>
+                    <h3 style="text-align: center;">Vue Interface Mobile (Client)</h3>
+                </div>
                 <div class="phone-mockup">
-                    <h4 style="text-align: center; margin-top: 0;">Suivi de vos finitions</h4>
-                    <p style="font-size: 12px; color: gray;">Statut : Fabrication en cours</p>
+                    <h4 class="phone-title">LFC Suivi</h4>
+                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">État : Façonnage en cours</p>
+                    
                     <div class="jauge">
-                        <div class="jauge-fill">60%</div>
+                        <div class="jauge-fill"></div>
                     </div>
-                    <button class="action-btn" style="width: 100%; margin: 10px 0;">Activer la Réalité Augmentée (AR)</button>
-                    <button class="action-btn alert-btn" style="width: 100%; margin: 0;">Une question ? Nous contacter</button>
+                    <p style="font-size: 10px; color: var(--text-dark); text-align: right; margin-top: -20px;">60%</p>
+                    
+                    <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;">Visualiser en AR (Réalité Augmentée)</button>
+                    <button class="action-btn" style="width: 100%; font-size: 10px; border-color: var(--text-muted); color: var(--text-muted);">Contacter l'agence</button>
                 </div>
             </div>
         </div>
@@ -276,37 +383,34 @@
     </div>
 
     <script>
-        // Fonction pour changer d'onglet
         function openModule(moduleId) {
-            // 1. Cacher tous les modules
             var contents = document.getElementsByClassName("module-content");
             for (var i = 0; i < contents.length; i++) {
                 contents[i].classList.remove("active");
             }
             
-            // 2. Retirer la classe 'active' de tous les boutons
             var btns = document.getElementsByClassName("tab-btn");
             for (var j = 0; j < btns.length; j++) {
                 btns[j].classList.remove("active");
             }
             
-            // 3. Afficher le module sélectionné et mettre le bouton en surbrillance
             document.getElementById(moduleId).classList.add("active");
             event.currentTarget.classList.add("active");
         }
 
-        // Petite simulation amusante pour le LiDAR
         function simulateScan() {
             var result = document.getElementById("scan-result");
             result.style.display = "block";
-            result.innerHTML = "⏳ Scan en cours... Analyse des faux aplombs...";
-            result.style.color = "orange";
+            result.innerHTML = "Analyse topographique en cours...";
+            result.style.color = "var(--text-muted)";
             
             setTimeout(function() {
-                result.innerHTML = "✅ Modélisation 3D générée avec succès au millimètre près !";
-                result.style.color = "green";
-            }, 1500);
+                result.innerHTML = "✓ Modélisation 3D validée. Précision : 1mm.";
+                result.style.color = "var(--text-dark)";
+                result.style.fontWeight = "500";
+            }, 1800);
         }
     </script>
 </body>
 </html>
+
