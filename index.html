@@ -6,6 +6,7 @@
     <title>Fini-Pose 3D | Studio LFC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
+        /* === CSS : Design Architectural Minimaliste === */
         :root {
             --bg-light: #FAFAFA;
             --bg-white: #FFFFFF;
@@ -206,12 +207,6 @@
             text-align: center;
         }
 
-        .phone-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
         .jauge {
             width: 100%;
             background-color: var(--border-color);
@@ -238,9 +233,127 @@
             border-radius: 50%;
         }
         
-        #scan-result {
+        .result-text {
             font-size: 13px;
             letter-spacing: 0.5px;
+            display: none;
+        }
+
+        /* === Styles pour le Scanner Caméra (Nouvel ajout) === */
+        #camera-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #camera-stream {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Viseur / Interface AR par-dessus la vidéo */
+        .ar-overlay {
+            position: relative;
+            z-index: 2;
+            width: 80%;
+            height: 60%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Les 4 coins du viseur */
+        .ar-overlay::before, .ar-overlay::after {
+            content: ''; position: absolute; width: 40px; height: 40px; border-color: white; border-style: solid;
+        }
+        .ar-overlay::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
+        .ar-overlay::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+        .ar-overlay-inner { position: absolute; width: 100%; height: 100%; pointer-events: none; }
+        .ar-overlay-inner::before { content: ''; position: absolute; top: -2px; right: -2px; width: 40px; height: 40px; border: solid white; border-width: 3px 3px 0 0; }
+        .ar-overlay-inner::after { content: ''; position: absolute; bottom: -2px; left: -2px; width: 40px; height: 40px; border: solid white; border-width: 0 0 3px 3px; }
+
+        /* Ligne laser qui balaye */
+        .laser-line {
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.6);
+            position: absolute;
+            animation: scan-animation 2.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes scan-animation {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .camera-ui-bottom {
+            position: absolute;
+            bottom: 40px;
+            z-index: 3;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .camera-text {
+            position: absolute;
+            top: 40px;
+            z-index: 3;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .btn-capture {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-capture:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-close-camera {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 3;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -279,8 +392,8 @@
                     <span class="step-number">II.</span>
                     <h3>Acquisition Spatiale (LiDAR)</h3>
                 </div>
-                <button class="action-btn btn-accent" onclick="simulateScan()">Lancer le Scan 3D</button>
-                <p id="scan-result" style="display:none; color: var(--accent-color);">Analyse topographique en cours...</p>
+                <button class="action-btn btn-accent" onclick="openCamera('scan-result-metreur')">Lancer le Scan 3D</button>
+                <p id="scan-result-metreur" class="result-text"></p>
                 <button class="action-btn" onclick="alert('Aucun faux aplomb détecté sur ce mur.')" style="border-color: #D32F2F; color: #D32F2F;">Consulter les anomalies</button>
             </div>
 
@@ -316,7 +429,8 @@
                     <span class="step-number">II.</span>
                     <h3>Relevé Post-Pose</h3>
                 </div>
-                <button class="action-btn btn-accent" onclick="alert('Acquisition du cadre en cours...')">Scan de Contrôle (Cadre posé)</button>
+                <button class="action-btn btn-accent" onclick="openCamera('scan-result-poseur')">Scan de Contrôle (Cadre posé)</button>
+                <p id="scan-result-poseur" class="result-text"></p>
                 <button class="action-btn" onclick="alert('Génération du PDF de coupe avec cotes exactes.')">Extraire le plan de coupe (Génération PDF)</button>
             </div>
 
@@ -357,20 +471,31 @@
                     <h3 style="text-align: center;">Vue Interface Mobile (Client)</h3>
                 </div>
                 <div class="phone-mockup">
-                    <h4 class="phone-title">LFC Suivi</h4>
+                    <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px;">LFC Suivi</h4>
                     <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">État : Façonnage en cours</p>
-                    
-                    <div class="jauge">
-                        <div class="jauge-fill"></div>
-                    </div>
+                    <div class="jauge"><div class="jauge-fill"></div></div>
                     <p style="font-size: 10px; color: var(--text-dark); text-align: right; margin-top: -20px;">60%</p>
-                    
-                    <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;" onclick="alert('Ouverture de la caméra pour la Réalité Augmentée...')">Visualiser en AR (Réalité Augmentée)</button>
-                    <button class="action-btn" style="width: 100%; font-size: 10px; border-color: var(--text-muted); color: var(--text-muted);" onclick="alert('Appel de l\'agence au 04... en cours.')">Contacter l'agence</button>
+                    <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;" onclick="openCamera('client-ar')">Visualiser en AR (Réalité Augmentée)</button>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <div id="camera-modal">
+        <button class="btn-close-camera" onclick="closeCamera(false)">&times;</button>
+        <p class="camera-text">Analyse topographique en cours...</p>
+        
+        <video id="camera-stream" autoplay playsinline></video>
+        
+        <div class="ar-overlay">
+            <div class="ar-overlay-inner"></div>
+            <div class="laser-line"></div>
+        </div>
+
+        <div class="camera-ui-bottom">
+            <button class="btn-capture" onclick="closeCamera(true)">Valider l'acquisition</button>
+        </div>
     </div>
 
     <script>
@@ -380,30 +505,20 @@
             for (var i = 0; i < contents.length; i++) {
                 contents[i].classList.remove("active");
             }
-            
             var btns = document.getElementsByClassName("tab-btn");
             for (var j = 0; j < btns.length; j++) {
                 btns[j].classList.remove("active");
             }
-            
             document.getElementById(moduleId).classList.add("active");
             event.currentTarget.classList.add("active");
         }
 
-        // Animation de la touche Initialiser
+        // Autres animations
         function initProject(btn) {
-            var clientInput = document.getElementById("clientName").value;
-            if(clientInput === "") {
-                alert("Veuillez renseigner le nom du maître d'ouvrage avant d'initialiser.");
-                return;
-            }
-            
             var originalText = btn.innerHTML;
             btn.innerHTML = "Projet Initialisé ✓";
             btn.style.backgroundColor = "var(--text-dark)";
             btn.style.color = "var(--bg-white)";
-            
-            // Remet le bouton à la normale après 2 secondes
             setTimeout(function() {
                 btn.innerHTML = originalText;
                 btn.style.backgroundColor = "transparent";
@@ -411,36 +526,64 @@
             }, 2000);
         }
 
-        // Animation du scan 3D
-        function simulateScan() {
-            var result = document.getElementById("scan-result");
-            result.style.display = "block";
-            result.innerHTML = "Analyse topographique en cours...";
-            result.style.color = "var(--text-muted)";
-            
-            setTimeout(function() {
-                result.innerHTML = "✓ Modélisation 3D validée. Précision : 1mm.";
-                result.style.color = "var(--text-dark)";
-                result.style.fontWeight = "500";
-            }, 1800);
-        }
-
-        // Animation transmission Prodevis
         function exportProdevis(btn) {
             var originalText = btn.innerHTML;
-            btn.innerHTML = "Transmission en cours...";
-            
+            btn.innerHTML = "Transmission...";
             setTimeout(function() {
-                btn.innerHTML = "Transmis avec succès ✓";
-                btn.style.backgroundColor = "#4CAF50"; // Vert succès
-                btn.style.borderColor = "#4CAF50";
-                
-                setTimeout(function() {
-                    btn.innerHTML = originalText;
-                    btn.style.backgroundColor = "var(--text-dark)";
-                    btn.style.borderColor = "var(--text-dark)";
-                }, 2000);
+                btn.innerHTML = "Transmis ✓";
+                setTimeout(function() { btn.innerHTML = originalText; }, 2000);
             }, 1000);
+        }
+
+        /* === GESTION DE LA CAMÉRA === */
+        let currentStream = null;
+        let activeTargetId = null;
+
+        function openCamera(targetId) {
+            activeTargetId = targetId;
+            const modal = document.getElementById("camera-modal");
+            const video = document.getElementById("camera-stream");
+            
+            // Affiche l'interface caméra
+            modal.style.display = "flex";
+
+            // Demande l'accès à la caméra arrière (environment)
+            navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' } 
+            })
+            .then(function(stream) {
+                currentStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(function(error) {
+                console.error("Erreur d'accès à la caméra: ", error);
+                alert("Impossible d'ouvrir la caméra. Vérifiez les autorisations de votre navigateur.");
+                closeCamera(false);
+            });
+        }
+
+        function closeCamera(success) {
+            const modal = document.getElementById("camera-modal");
+            
+            // Arrête le flux vidéo pour économiser la batterie
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            // Cache l'interface
+            modal.style.display = "none";
+
+            // Si l'utilisateur a cliqué sur "Valider l'acquisition"
+            if (success && activeTargetId && activeTargetId !== 'client-ar') {
+                const targetText = document.getElementById(activeTargetId);
+                targetText.style.display = "block";
+                targetText.innerHTML = "✓ Modélisation 3D validée. Précision : 1mm.";
+                targetText.style.color = "var(--text-dark)";
+                targetText.style.fontWeight = "500";
+            } else if (success && activeTargetId === 'client-ar') {
+                alert("Fin de la simulation de Réalité Augmentée.");
+            }
         }
     </script>
 </body>
