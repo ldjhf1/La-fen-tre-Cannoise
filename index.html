@@ -2,7 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fini-Pose">
+    
     <title>Fini-Pose 3D | Studio LFC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
@@ -494,12 +498,12 @@
             border-radius: 5px;
         }
 
-        /* === NOUVEAU : CSS DU MODÈLE 3D === */
+        /* === CSS DU MODÈLE 3D === */
         .scene-3d {
             width: 100%;
             height: 200px;
             perspective: 600px;
-            display: none; /* Caché par défaut, apparaîtra après le scan */
+            display: none; 
             justify-content: center;
             align-items: center;
             margin-top: 10px;
@@ -524,16 +528,14 @@
         .face {
             position: absolute;
             border: 3px solid var(--text-dark);
-            background: rgba(184, 168, 146, 0.3); /* Beige semi-transparent */
+            background: rgba(184, 168, 146, 0.3);
             box-sizing: border-box;
         }
 
-        /* Construction de la fenêtre 3D */
         .face-front, .face-back { width: 100px; height: 150px; }
         .face-left, .face-right { width: 30px; height: 150px; left: 35px; } 
         .face-top, .face-bottom { width: 100px; height: 30px; top: 60px; } 
 
-        /* Placement dans l'espace 3D */
         .face-front  { transform: translateZ(15px); }
         .face-back   { transform: rotateY(180deg) translateZ(15px); }
         .face-left   { transform: rotateY(-90deg) translateZ(50px); }
@@ -541,7 +543,6 @@
         .face-top    { transform: rotateX(90deg) translateZ(75px); }
         .face-bottom { transform: rotateX(-90deg) translateZ(75px); }
 
-        /* Le montant central (Meneau) */
         .mullion {
             position: absolute;
             width: 4px;
@@ -551,7 +552,6 @@
             transform: translateX(-50%);
         }
 
-        /* Mode sombre pour la 3D */
         body.dark-mode .face { border-color: #FFFFFF; background: rgba(215, 204, 200, 0.15); }
         body.dark-mode .mullion { background: #FFFFFF; }
         
@@ -564,6 +564,73 @@
             margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        /* === NOUVEAU : CSS de la bannière d'installation "Fake PWA" === */
+        .install-banner {
+            position: fixed;
+            bottom: -100px; /* Cachée au début */
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-white);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 9000;
+            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        body.dark-mode .install-banner { box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
+
+        .install-banner.show { bottom: 0; }
+
+        .install-info { display: flex; align-items: center; gap: 15px; }
+
+        /* Faux logo d'application */
+        .install-logo {
+            width: 45px;
+            height: 45px;
+            background-color: var(--text-dark);
+            color: var(--bg-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .install-text { display: flex; flex-direction: column; }
+        .install-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin: 0; }
+        .install-sub { font-size: 11px; color: var(--text-muted); margin: 2px 0 0 0; }
+
+        .install-actions { display: flex; align-items: center; gap: 10px; }
+        
+        .btn-install {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-close-install {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
         }
     </style>
 </head>
@@ -623,6 +690,7 @@
                     </div>
                 </div>
                 <p id="instruction-3d">Faites glisser pour pivoter le modèle</p>
+
                 <button class="action-btn" onclick="alert('Aucun faux aplomb détecté sur ce mur.')" style="border-color: #D32F2F; color: #D32F2F;">Consulter les anomalies</button>
             </div>
 
@@ -762,6 +830,20 @@
             </div>
             
             <button class="action-btn btn-accent" onclick="document.getElementById('modal-plan').style.display='none'">Envoyer en Production</button>
+        </div>
+    </div>
+
+    <div id="install-banner" class="install-banner">
+        <div class="install-info">
+            <div class="install-logo">FP</div>
+            <div class="install-text">
+                <p class="install-title">Fini-Pose 3D Pro</p>
+                <p class="install-sub">Installez l'app sur votre écran d'accueil</p>
+            </div>
+        </div>
+        <div class="install-actions">
+            <button class="btn-close-install" onclick="hideInstallBanner()">&times;</button>
+            <button class="btn-install" onclick="simulateInstall()">Installer</button>
         </div>
     </div>
 
@@ -935,7 +1017,6 @@
             }
             modal.style.display = "none";
 
-            // Si on valide le scan depuis le module Métreur, on affiche le bloc 3D
             if (success && activeTargetId === 'scan-result-metreur') {
                 const targetText = document.getElementById(activeTargetId);
                 targetText.style.display = "block";
@@ -943,7 +1024,6 @@
                 targetText.style.color = "var(--text-dark)";
                 targetText.style.fontWeight = "500";
 
-                // Affichage du module 3D
                 document.getElementById('scene3d').style.display = 'flex';
                 document.getElementById('instruction-3d').style.display = 'block';
             } else if (success && activeTargetId === 'scan-result-poseur') {
@@ -953,7 +1033,7 @@
             }
         }
 
-        // === NOUVEAU : GESTION DE LA FENÊTRE 3D TACTILE ===
+        // === GESTION DE LA FENÊTRE 3D TACTILE ===
         let isDragging3D = false;
         let prevPos3D = { x: 0, y: 0 };
         let rot3D = { x: -15, y: -20 };
@@ -967,11 +1047,10 @@
 
         function drag3D(e) {
             if (!isDragging3D) return;
-            e.preventDefault(); // Empêche de scroller la page quand on tourne le cube
+            e.preventDefault(); 
             const currentPos = { x: e.pageX || (e.touches ? e.touches[0].pageX : 0), y: e.pageY || (e.touches ? e.touches[0].pageY : 0) };
             const delta = { x: currentPos.x - prevPos3D.x, y: currentPos.y - prevPos3D.y };
             
-            // Ajustement de la vitesse de rotation
             rot3D.y += delta.x * 0.6;
             rot3D.x -= delta.y * 0.6;
             
@@ -1047,6 +1126,26 @@
 
         function clearSignature() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // === NOUVEAU : GESTION DE LA BANNIÈRE D'INSTALLATION ===
+        window.onload = function() {
+            // Affiche la bannière d'installation après 1.5 secondes pour capter l'attention
+            setTimeout(() => {
+                // On simule que la bannière n'apparaît que sur les écrans de type mobile (largeur < 768px)
+                if(window.innerWidth < 768) {
+                    document.getElementById('install-banner').classList.add('show');
+                }
+            }, 1500);
+        };
+
+        function hideInstallBanner() {
+            document.getElementById('install-banner').classList.remove('show');
+        }
+
+        function simulateInstall() {
+            alert("Simulation : L'application Fini-Pose 3D a été ajoutée à l'écran d'accueil de votre téléphone. Vous pouvez maintenant l'ouvrir en plein écran sans passer par le navigateur !");
+            hideInstallBanner();
         }
     </script>
 </body>
