@@ -6,7 +6,7 @@
     <title>Fini-Pose 3D | Studio LFC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        /* === CSS Variables avec Mode Sombre === */
+        /* === CSS : Design Architectural Minimaliste === */
         :root {
             --bg-light: #FAFAFA;
             --bg-white: #FFFFFF;
@@ -14,17 +14,6 @@
             --text-muted: #757575;
             --accent-color: #B8A892; 
             --border-color: #E0E0E0;
-            --shadow: rgba(0,0,0,0.05);
-        }
-
-        body.dark-mode {
-            --bg-light: #121212;
-            --bg-white: #1E1E1E;
-            --text-dark: #F5F5F5;
-            --text-muted: #9E9E9E;
-            --accent-color: #D7CCC8; 
-            --border-color: #333333;
-            --shadow: rgba(255,255,255,0.02);
         }
 
         body {
@@ -37,35 +26,14 @@
             flex-direction: column;
             align-items: center;
             font-weight: 300;
-            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Header & Dark Mode Toggle */
         header {
             background-color: var(--bg-white);
             width: 100%;
             padding: 40px 0;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
-            position: relative;
-            transition: background-color 0.3s;
-        }
-
-        .dark-mode-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 18px;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         header h1 {
@@ -77,92 +45,389 @@
             text-transform: uppercase;
         }
 
-        header p { margin: 10px 0 0 0; font-size: 12px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; }
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
 
-        .container { width: 100%; max-width: 900px; margin: 40px auto; padding: 0 20px; box-sizing: border-box; }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
 
-        /* Navigation */
-        .tabs { display: flex; justify-content: center; gap: 40px; margin-bottom: 50px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
-        .tab-btn { background: none; border: none; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 1px; color: var(--text-muted); cursor: pointer; padding: 10px 0; position: relative; text-transform: uppercase; transition: color 0.3s ease; }
-        .tab-btn::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 0%; height: 1px; background-color: var(--text-dark); transition: width 0.3s ease; }
-        .tab-btn.active, .tab-btn:hover { color: var(--text-dark); }
-        .tab-btn.active::after { width: 100%; }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
 
-        .module-content { display: none; animation: fadeIn 0.6s ease-in-out; }
-        .module-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-btn {
+            background: none;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 10px 0;
+            position: relative;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
 
-        /* Cartes */
-        .card { background: var(--bg-white); padding: 40px; margin-bottom: 30px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 20px var(--shadow); transition: background-color 0.3s; }
-        .card-header { display: flex; align-items: baseline; margin-bottom: 10px; }
-        .step-number { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--accent-color); margin-right: 15px; font-style: italic; }
-        .card h3 { font-size: 16px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background-color: var(--text-dark);
+            transition: width 0.3s ease;
+        }
 
-        input, select, textarea { width: 100%; padding: 12px 0; background: transparent; border: none; border-bottom: 1px solid var(--border-color); font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--text-dark); transition: border-color 0.3s ease, color 0.3s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-bottom: 1px solid var(--text-dark); }
+        .tab-btn.active, .tab-btn:hover {
+            color: var(--text-dark);
+        }
 
-        .action-btn { background-color: transparent; color: var(--text-dark); border: 1px solid var(--text-dark); padding: 14px 24px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.3s ease; width: max-content; }
-        .action-btn:hover { background-color: var(--text-dark); color: var(--bg-white); }
-        .btn-accent { background-color: var(--text-dark); color: var(--bg-light); border-color: var(--text-dark); }
-        .btn-accent:hover { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
+        .tab-btn.active::after {
+            width: 100%;
+        }
 
-        /* Composants spécifiques */
-        .input-group { display: flex; gap: 10px; align-items: center; width: 100%; }
+        .module-content {
+            display: none;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .module-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-white);
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--accent-color);
+            margin-right: 15px;
+            font-style: italic;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid var(--text-dark);
+        }
+
+        .action-btn {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-dark);
+            padding: 14px 24px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            width: max-content;
+        }
+
+        .action-btn:hover {
+            background-color: var(--text-dark);
+            color: var(--bg-white);
+        }
+
+        .btn-accent {
+            background-color: var(--text-dark);
+            color: var(--bg-white);
+            border-color: var(--text-dark);
+        }
+
+        .btn-accent:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .phone-mockup {
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 280px;
+            margin: 0 auto;
+            background: var(--bg-light);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .jauge {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 2px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .jauge-fill {
+            width: 0%; 
+            background-color: var(--text-dark);
+            height: 100%;
+            position: relative;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .jauge-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--text-dark);
+            border-radius: 50%;
+        }
         
-        /* Fenêtre 3D CSS */
-        .scene-3d { width: 100%; height: 200px; perspective: 600px; display: none; justify-content: center; align-items: center; margin-top: 20px; cursor: grab; }
-        .scene-3d:active { cursor: grabbing; }
-        .cube { width: 100px; height: 150px; position: relative; transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(-20deg); transition: transform 0.1s; }
-        .face { position: absolute; width: 100px; height: 150px; border: 4px solid var(--text-dark); background: rgba(184, 168, 146, 0.2); }
-        .face-front  { transform: translateZ(10px); }
-        .face-back   { transform: rotateY(180deg) translateZ(10px); }
-        .face-left   { width: 20px; transform: rotateY(-90deg) translateZ(10px); }
-        .face-right  { width: 20px; transform: rotateY(90deg) translateZ(90px); }
-        .face-top    { height: 20px; transform: rotateX(90deg) translateZ(10px); }
-        .face-bottom { height: 20px; transform: rotateX(-90deg) translateZ(140px); }
-        .mullion { position: absolute; width: 4px; height: 100%; background: var(--text-dark); left: 50%; transform: translateX(-50%); }
+        .result-text {
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            display: none;
+        }
 
-        /* Signature Pad */
-        .signature-pad { width: 100%; height: 150px; border: 1px dashed var(--border-color); background: var(--bg-light); cursor: crosshair; touch-action: none; border-radius: 5px; }
+        /* === Styles pour le Scanner Caméra === */
+        #camera-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-        /* Modal Plan de Coupe */
-        .modal-plan { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--bg-white); padding: 40px; border-radius: 10px; text-align: center; position: relative; min-width: 300px; }
-        .plan-diagram { width: 200px; height: 250px; border: 3px solid var(--text-dark); margin: 20px auto; position: relative; display: flex; justify-content: center; align-items: center; }
-        .plan-line-v { position: absolute; width: 1px; height: 100%; background: var(--text-dark); border-left: 2px dashed var(--accent-color); }
-        .plan-line-h { position: absolute; width: 100%; height: 1px; background: var(--text-dark); border-top: 2px dashed var(--accent-color); }
-        .dim-w { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; font-family: monospace; }
-        .dim-h { position: absolute; left: -50px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: bold; font-family: monospace; }
-        .close-modal { position: absolute; top: 10px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-dark); background: none; border: none; }
+        #camera-stream {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
 
-        /* Phone & Camera (existant) */
-        .phone-mockup { border: 1px solid var(--border-color); border-radius: 20px; padding: 30px 20px; max-width: 280px; margin: 0 auto; background: var(--bg-light); text-align: center; }
-        .jauge { width: 100%; background-color: var(--border-color); height: 2px; margin: 30px 0; position: relative; }
-        .jauge-fill { width: 0%; background-color: var(--text-dark); height: 100%; position: relative; transition: width 0.8s; }
-        .jauge-fill::after { content: ''; position: absolute; right: 0; top: -4px; width: 10px; height: 10px; background-color: var(--text-dark); border-radius: 50%; }
-        
-        #camera-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
-        #camera-stream { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        .ar-overlay { position: relative; z-index: 2; width: 80%; height: 60%; border: 2px solid rgba(255, 255, 255, 0.3); display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .ar-overlay::before, .ar-overlay::after { content: ''; position: absolute; width: 40px; height: 40px; border-color: white; border-style: solid; }
+        .ar-overlay {
+            position: relative;
+            z-index: 2;
+            width: 80%;
+            height: 60%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ar-overlay::before, .ar-overlay::after {
+            content: ''; position: absolute; width: 40px; height: 40px; border-color: white; border-style: solid;
+        }
         .ar-overlay::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
         .ar-overlay::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
         .ar-overlay-inner { position: absolute; width: 100%; height: 100%; pointer-events: none; }
         .ar-overlay-inner::before { content: ''; position: absolute; top: -2px; right: -2px; width: 40px; height: 40px; border: solid white; border-width: 3px 3px 0 0; }
         .ar-overlay-inner::after { content: ''; position: absolute; bottom: -2px; left: -2px; width: 40px; height: 40px; border: solid white; border-width: 0 0 3px 3px; }
-        .laser-line { width: 100%; height: 2px; background-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.6); position: absolute; animation: scan-animation 2.5s infinite alternate ease-in-out; }
-        @keyframes scan-animation { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-        .camera-ui-bottom { position: absolute; bottom: 40px; z-index: 3; width: 100%; display: flex; justify-content: center; }
-        .camera-text { position: absolute; top: 40px; z-index: 3; color: white; font-family: 'Montserrat', sans-serif; letter-spacing: 2px; text-transform: uppercase; font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        #ar-dynamic-status { color: white; font-family: 'Montserrat', sans-serif; font-size: 16px; text-align: center; background: rgba(0,0,0,0.4); padding: 15px 20px; border-radius: 10px; backdrop-filter: blur(5px); z-index: 3; display: none;}
-        .btn-capture { background-color: white; color: black; border: none; padding: 15px 30px; border-radius: 30px; font-weight: 600; text-transform: uppercase; cursor: pointer; }
-        .btn-close-camera { position: absolute; top: 30px; right: 30px; z-index: 3; background: none; border: none; color: white; font-size: 30px; cursor: pointer; }
+
+        .laser-line {
+            width: 100%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.6);
+            position: absolute;
+            animation: scan-animation 2.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes scan-animation {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        #ar-dynamic-status {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.4);
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            z-index: 3;
+            letter-spacing: 1px;
+        }
+
+        .camera-ui-bottom {
+            position: absolute;
+            bottom: 40px;
+            z-index: 3;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .camera-text {
+            position: absolute;
+            top: 40px;
+            z-index: 3;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .btn-capture {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-capture:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-close-camera {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 3;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* === NOUVEAU : CSS de la Modale Plan de Coupe === */
+        .modal-plan {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            min-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .plan-diagram {
+            width: 220px;
+            height: 280px;
+            border: 4px solid var(--text-dark);
+            margin: 40px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        /* Montants de la fenêtre */
+        .plan-line-v { position: absolute; width: 4px; height: 100%; background: var(--text-dark); }
+        .plan-line-h { position: absolute; width: 100%; height: 4px; background: var(--text-dark); }
+        
+        /* Cotes */
+        .dim-w { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
+        .dim-h { position: absolute; left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
+        .dim-angle { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 13px; color: var(--text-dark);}
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-dark);
+            background: none;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
         <h1>Fini-Pose 3D</h1>
         <p>Studio La Fenêtre Cannoise</p>
     </header>
@@ -176,81 +441,133 @@
 
         <div id="metreur" class="module-content active">
             <div class="card">
-                <div class="card-header"><span class="step-number">I.</span><h3>Dossier Projet</h3></div>
-                <input type="text" placeholder="Maître d'ouvrage (Nom du client)">
-                
-                <div class="input-group">
-                    <input type="text" id="clientAddress" placeholder="Lieu d'intervention (ex: Cannes)">
-                    <button class="action-btn" onclick="getLocation()" style="padding: 10px; width: 45px; margin: 0;" title="Me localiser">📍</button>
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Dossier Projet</h3>
                 </div>
-
-                <select><option>Rénovation Globale</option><option>Dépose Totale</option></select>
+                <input type="text" id="clientName" placeholder="Maître d'ouvrage (Nom du client)">
+                <input type="text" id="clientAddress" placeholder="Lieu d'intervention">
+                <select>
+                    <option>Nature des travaux...</option>
+                    <option>Rénovation Globale</option>
+                    <option>Dépose Totale</option>
+                </select>
                 <button class="action-btn" onclick="initProject(this)">Initialiser le projet</button>
             </div>
 
             <div class="card">
-                <div class="card-header"><span class="step-number">II.</span><h3>Acquisition Spatiale (LiDAR)</h3></div>
-                <button class="action-btn btn-accent" onclick="openCamera('scan-metreur')">Lancer le Scan 3D</button>
-                
-                <div id="scene3d" class="scene-3d">
-                    <div class="cube" id="cube">
-                        <div class="face face-front"><div class="mullion"></div></div>
-                        <div class="face face-back"><div class="mullion"></div></div>
-                        <div class="face face-left"></div>
-                        <div class="face face-right"></div>
-                        <div class="face face-top"></div>
-                        <div class="face face-bottom"></div>
-                    </div>
+                <div class="card-header">
+                    <span class="step-number">II.</span>
+                    <h3>Acquisition Spatiale (LiDAR)</h3>
                 </div>
-                <p id="3d-instruction" style="display:none; font-size:11px; text-align:center; color:var(--accent-color);">Faites glisser pour pivoter le modèle</p>
+                <button class="action-btn btn-accent" onclick="openCamera('scan-result-metreur')">Lancer le Scan 3D</button>
+                <p id="scan-result-metreur" class="result-text"></p>
+                <button class="action-btn" onclick="alert('Aucun faux aplomb détecté sur ce mur.')" style="border-color: #D32F2F; color: #D32F2F;">Consulter les anomalies</button>
             </div>
-            
+
             <div class="card">
-                <div class="card-header"><span class="step-number">III.</span><h3>Ingénierie & Commande</h3></div>
-                <select><option>Normabaie Innovax Alu</option><option>VEKA Softline PVC</option></select>
-                <button class="action-btn btn-accent">Transmettre vers Prodevis</button>
+                <div class="card-header">
+                    <span class="step-number">III.</span>
+                    <h3>Ingénierie & Commande</h3>
+                </div>
+                <select>
+                    <option>Sélection du profilé architectural...</option>
+                    <option>Normabaie Innovax Aluminium</option>
+                    <option>VEKA Softline PVC</option>
+                </select>
+                <button class="action-btn" onclick="alert('Nomenclature générée : \n- Cornière 40x40 (L: 1200mm)\n- Plat de 60 (L: 1150mm)')">Générer la nomenclature IA</button>
+                <button class="action-btn btn-accent" onclick="exportProdevis(this)">Transmettre vers Prodevis</button>
             </div>
         </div>
 
         <div id="poseur" class="module-content">
             <div class="card">
-                <div class="card-header"><span class="step-number">I.</span><h3>Relevé Post-Pose</h3></div>
-                <button class="action-btn btn-accent" onclick="openCamera('scan-poseur')">Scan de Contrôle</button>
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Identification du site</h3>
+                </div>
+                <select>
+                    <option>Sélectionner le chantier actif...</option>
+                    <option>Projet Dupont - Villa Cannes</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="step-number">II.</span>
+                    <h3>Relevé Post-Pose</h3>
+                </div>
+                <button class="action-btn btn-accent" onclick="openCamera('scan-result-poseur')">Scan de Contrôle (Cadre posé)</button>
+                <p id="scan-result-poseur" class="result-text"></p>
                 <button class="action-btn" onclick="showPlan()">Extraire le plan de coupe (Génération PDF)</button>
             </div>
 
             <div class="card">
-                <div class="card-header"><span class="step-number">II.</span><h3>Signature & Validation</h3></div>
-                <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Validation du bon de commande habillages :</p>
-                <canvas id="sigCanvas" class="signature-pad" width="400" height="150"></canvas>
-                <div style="display: flex; gap: 10px;">
-                    <button class="action-btn" onclick="clearSignature()" style="border-color: #D32F2F; color: #D32F2F;">Effacer</button>
-                    <button class="action-btn btn-accent" onclick="alert('Signature enregistrée et cryptée.')">Valider</button>
+                <div class="card-header">
+                    <span class="step-number">III.</span>
+                    <h3>Exécution</h3>
                 </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="action-btn" onclick="alert('Mode plein écran activé pour découpe sur site.')">Mode Façonnage (Sur site)</button>
+                    <button class="action-btn btn-accent" onclick="alert('Commande envoyée à l\'atelier LFC !')">Requête Atelier (Commande 1 clic)</button>
+                </div>
+                <textarea rows="2" placeholder="Prescriptions techniques pour l'atelier..."></textarea>
             </div>
         </div>
 
         <div id="client" class="module-content">
             <div class="card">
-                <div class="card-header"><span class="step-number">I.</span><h3>Administration LFC</h3></div>
+                <div class="card-header">
+                    <span class="step-number">I.</span>
+                    <h3>Administration LFC</h3>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button class="action-btn" onclick="alert('Clé d\'accès générée : LFC-89X2')">Générer clé d'accès</button>
+                    <button class="action-btn btn-accent" onclick="alert('SMS envoyé au client avec le lien de suivi.')">Notifier le maître d'ouvrage</button>
+                </div>
                 <select id="lfc-status-select" onchange="updateClientUI()">
                     <option value="0">Actualiser l'état d'avancement...</option>
-                    <option value="1">1. Profilés en façonnage</option>
-                    <option value="2">2. Contrôle & Expédition</option>
-                    <option value="3">3. Prêt à poser</option>
+                    <option value="1">1. Profilés en façonnage (Atelier)</option>
+                    <option value="2">2. Contrôle qualité & Expédition</option>
+                    <option value="3">3. Planification de l'intervention</option>
                 </select>
             </div>
 
             <div class="card" style="background-color: var(--bg-light); border: none;">
-                <div class="card-header" style="justify-content: center;"><span class="step-number" style="font-size: 16px;">II.</span><h3 style="text-align: center;">Vue Mobile Client</h3></div>
+                <div class="card-header" style="justify-content: center;">
+                    <span class="step-number" style="font-size: 16px;">II.</span>
+                    <h3 style="text-align: center;">Vue Interface Mobile (Client)</h3>
+                </div>
                 <div class="phone-mockup">
-                    <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px; color: var(--text-dark);">LFC Suivi</h4>
-                    <p id="mobile-status-text" style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">En attente</p>
+                    <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px;">LFC Suivi</h4>
+                    
+                    <p id="mobile-status-text" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">En attente de démarrage</p>
+                    
                     <div class="jauge"><div id="mobile-jauge-fill" class="jauge-fill"></div></div>
+                    
                     <p id="mobile-percent-text" style="font-size: 10px; color: var(--text-dark); text-align: right; margin-top: -20px;">0%</p>
-                    <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;" onclick="openCamera('client-ar')">Visualiser en AR</button>
+                    
+                    <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;" onclick="openCamera('client-ar')">Visualiser en AR (Réalité Augmentée)</button>
                 </div>
             </div>
+        </div>
+
+    </div>
+
+    <div id="camera-modal">
+        <button class="btn-close-camera" onclick="closeCamera(false)">&times;</button>
+        <p class="camera-text" id="camera-header-text">Analyse topographique en cours...</p>
+        
+        <video id="camera-stream" autoplay playsinline></video>
+        
+        <div class="ar-overlay">
+            <div class="ar-overlay-inner"></div>
+            <div id="ar-dynamic-status" style="display: none;"></div>
+            <div class="laser-line"></div>
+        </div>
+
+        <div class="camera-ui-bottom">
+            <button class="btn-capture" onclick="closeCamera(true)">Valider l'acquisition</button>
         </div>
     </div>
 
@@ -258,169 +575,100 @@
         <div class="modal-content">
             <button class="close-modal" onclick="document.getElementById('modal-plan').style.display='none'">&times;</button>
             <h3 style="font-family: 'Playfair Display', serif; margin-top: 0; color: var(--text-dark);">Plan de Coupe Généré</h3>
-            <p style="font-size: 12px; color: var(--text-muted);">Généré automatiquement par l'IA LiDAR</p>
+            <p style="font-size: 12px; color: var(--text-muted);">Cotes exactes issues du scan 3D</p>
+            
             <div class="plan-diagram">
-                <div class="dim-w" id="dim-w">1200 mm</div>
-                <div class="dim-h" id="dim-h">2150 mm</div>
+                <div class="dim-w" id="dim-w">L: 1200 mm</div>
+                <div class="dim-h" id="dim-h">H: 2150 mm</div>
+                <div class="dim-angle">Angles : 45°</div>
                 <div class="plan-line-v"></div>
                 <div class="plan-line-h"></div>
             </div>
-            <button class="action-btn btn-accent" onclick="document.getElementById('modal-plan').style.display='none'">Envoyer à l'atelier</button>
+            
+            <button class="action-btn btn-accent" onclick="document.getElementById('modal-plan').style.display='none'">Envoyer en Production</button>
         </div>
-    </div>
-
-    <div id="camera-modal">
-        <button class="btn-close-camera" onclick="closeCamera(false)">&times;</button>
-        <p class="camera-text" id="camera-header-text">Analyse topographique en cours...</p>
-        <video id="camera-stream" autoplay playsinline></video>
-        <div class="ar-overlay">
-            <div class="ar-overlay-inner"></div>
-            <div id="ar-dynamic-status"></div>
-            <div class="laser-line"></div>
-        </div>
-        <div class="camera-ui-bottom"><button class="btn-capture" onclick="closeCamera(true)">Valider l'acquisition</button></div>
     </div>
 
     <script>
-        // 1. Dark Mode Toggle
-        let isDark = false;
-        function toggleDarkMode() {
-            isDark = !isDark;
-            document.body.classList.toggle('dark-mode', isDark);
-            document.querySelector('.dark-mode-toggle').innerHTML = isDark ? '☀️' : '🌙';
-        }
-
-        // 2. Navigation Onglets
+        // Gestion des onglets
         function openModule(moduleId) {
-            document.querySelectorAll(".module-content").forEach(el => el.classList.remove("active"));
-            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+            var contents = document.getElementsByClassName("module-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            var btns = document.getElementsByClassName("tab-btn");
+            for (var j = 0; j < btns.length; j++) {
+                btns[j].classList.remove("active");
+            }
             document.getElementById(moduleId).classList.add("active");
             event.currentTarget.classList.add("active");
-            
-            // Redimensionner le canvas si on ouvre le module Poseur
-            if(moduleId === 'poseur') resizeCanvas();
         }
 
-        // 3. Géolocalisation
-        function getLocation() {
-            const input = document.getElementById('clientAddress');
-            input.value = "Recherche satellite en cours...";
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    // Utilisation d'une API publique gratuite pour transformer les coordonnées en adresse
-                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`)
-                    .then(res => res.json())
-                    .then(data => {
-                        input.value = data.address.road ? `${data.address.house_number || ''} ${data.address.road}, ${data.address.city || data.address.town}` : "📍 Adresse trouvée";
-                    }).catch(() => {
-                        input.value = `📍 GPS: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
-                    });
-                }, () => {
-                    input.value = "📍 Boulevard Carnot, Cannes (Simulation)";
-                });
-            } else {
-                input.value = "📍 Géolocalisation non supportée";
-            }
-        }
-
+        // Animations boutons
         function initProject(btn) {
-            btn.innerHTML = "Projet Initialisé ✓"; btn.style.backgroundColor = "var(--text-dark)"; btn.style.color = "var(--bg-light)";
-            setTimeout(() => { btn.innerHTML = "Initialiser le projet"; btn.style.backgroundColor = "transparent"; btn.style.color = "var(--text-dark)"; }, 2000);
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "Projet Initialisé ✓";
+            btn.style.backgroundColor = "var(--text-dark)";
+            btn.style.color = "var(--bg-white)";
+            setTimeout(function() {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = "var(--text-dark)";
+            }, 2000);
         }
 
-        // 4. Plan de Coupe Aléatoire
+        function exportProdevis(btn) {
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "Transmission...";
+            setTimeout(function() {
+                btn.innerHTML = "Transmis ✓";
+                setTimeout(function() { btn.innerHTML = originalText; }, 2000);
+            }, 1000);
+        }
+
+        // NOUVEAU : Fonction Plan de Coupe Aléatoire
         function showPlan() {
+            // Génère une largeur entre 800 et 1800
             const w = Math.floor(Math.random() * (1800 - 800) + 800);
+            // Génère une hauteur entre 1000 et 2500
             const h = Math.floor(Math.random() * (2500 - 1000) + 1000);
-            document.getElementById('dim-w').innerText = w + " mm";
-            document.getElementById('dim-h').innerText = h + " mm";
+            
+            document.getElementById('dim-w').innerText = "L: " + w + " mm";
+            document.getElementById('dim-h').innerText = "H: " + h + " mm";
+            
+            // Affiche la pop-up
             document.getElementById('modal-plan').style.display = 'flex';
         }
 
-        // 5. Signature Tactile
-        const canvas = document.getElementById('sigCanvas');
-        const ctx = canvas.getContext('2d');
-        let isDrawing = false;
-
-        function resizeCanvas() {
-            // Ajuste la taille visuelle pour qu'elle corresponde aux pixels dessinés
-            canvas.width = canvas.offsetWidth;
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = isDark ? '#FFFFFF' : '#1A1A1A';
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function startDrawing(e) { isDrawing = true; draw(e); }
-        function stopDrawing() { isDrawing = false; ctx.beginPath(); }
-        function draw(e) {
-            if (!isDrawing) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches[0].clientY) - rect.top;
-            ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#1A1A1A';
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        }
-
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-        canvas.addEventListener('touchstart', startDrawing, {passive: false});
-        canvas.addEventListener('touchmove', draw, {passive: false});
-        canvas.addEventListener('touchend', stopDrawing);
-
-        function clearSignature() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // 6. Interaction 3D
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let rotation = { x: -15, y: -20 };
-        const cube = document.getElementById('cube');
-        const scene = document.getElementById('scene3d');
-
-        function startDrag(e) {
-            isDragging = true;
-            previousMousePosition = { x: e.pageX || e.touches[0].pageX, y: e.pageY || e.touches[0].pageY };
-        }
-        function drag(e) {
-            if (!isDragging) return;
-            const currentPosition = { x: e.pageX || e.touches[0].pageX, y: e.pageY || e.touches[0].pageY };
-            const deltaMove = { x: currentPosition.x - previousMousePosition.x, y: currentPosition.y - previousMousePosition.y };
-            rotation.y += deltaMove.x * 0.5;
-            rotation.x -= deltaMove.y * 0.5;
-            cube.style.transform = `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`;
-            previousMousePosition = currentPosition;
-        }
-        function stopDrag() { isDragging = false; }
-
-        scene.addEventListener('mousedown', startDrag);
-        window.addEventListener('mousemove', drag);
-        window.addEventListener('mouseup', stopDrag);
-        scene.addEventListener('touchstart', startDrag, {passive: true});
-        window.addEventListener('touchmove', drag, {passive: true});
-        window.addEventListener('touchend', stopDrag);
-
-        // 7. Caméra & Client UI
+        /* === LOGIQUE DE MISE A JOUR DU STATUT CLIENT === */
         function updateClientUI() {
-            const val = document.getElementById("lfc-status-select").value;
-            const status = document.getElementById("mobile-status-text");
-            const jauge = document.getElementById("mobile-jauge-fill");
-            const pct = document.getElementById("mobile-percent-text");
+            var statusSelect = document.getElementById("lfc-status-select").value;
+            var statusText = document.getElementById("mobile-status-text");
+            var jaugeFill = document.getElementById("mobile-jauge-fill");
+            var percentText = document.getElementById("mobile-percent-text");
 
-            if(val == "1") { status.innerText = "Façonnage"; jauge.style.width = "30%"; pct.innerText = "30%"; jauge.style.backgroundColor = "var(--text-dark)"; }
-            else if(val == "2") { status.innerText = "Expédition"; jauge.style.width = "70%"; pct.innerText = "70%"; jauge.style.backgroundColor = "var(--text-dark)";}
-            else if(val == "3") { status.innerText = "Prêt à poser"; jauge.style.width = "100%"; pct.innerText = "100%"; jauge.style.backgroundColor = "var(--accent-color)"; }
-            else { status.innerText = "En attente"; jauge.style.width = "0%"; pct.innerText = "0%"; }
+            if(statusSelect === "1") {
+                statusText.innerHTML = "État : Façonnage en cours";
+                jaugeFill.style.width = "30%";
+                percentText.innerHTML = "30%";
+            } else if(statusSelect === "2") {
+                statusText.innerHTML = "État : Qualité & Expédition";
+                jaugeFill.style.width = "70%";
+                percentText.innerHTML = "70%";
+            } else if(statusSelect === "3") {
+                statusText.innerHTML = "État : Prêt à poser";
+                jaugeFill.style.width = "100%";
+                jaugeFill.style.backgroundColor = "#B8A892"; // Devient beige accent à 100%
+                percentText.innerHTML = "100%";
+            } else {
+                statusText.innerHTML = "En attente de démarrage";
+                jaugeFill.style.width = "0%";
+                jaugeFill.style.backgroundColor = "var(--text-dark)";
+                percentText.innerHTML = "0%";
+            }
         }
 
+        /* === GESTION DE LA CAMÉRA === */
         let currentStream = null;
         let activeTargetId = null;
 
@@ -428,39 +676,63 @@
             activeTargetId = targetId;
             const modal = document.getElementById("camera-modal");
             const video = document.getElementById("camera-stream");
-            const arText = document.getElementById("ar-dynamic-status");
-            const headerText = document.getElementById("camera-header-text");
+            const arDynamicStatus = document.getElementById("ar-dynamic-status");
+            const cameraHeaderText = document.getElementById("camera-header-text");
             
-            arText.style.display = "none";
-            headerText.innerText = "Analyse topographique en cours...";
+            arDynamicStatus.style.display = "none";
+            cameraHeaderText.innerHTML = "Analyse topographique en cours...";
 
             if(targetId === 'client-ar') {
-                headerText.innerText = "Mode AR : Projection Client";
-                const val = document.getElementById("lfc-status-select").value;
-                arText.style.display = "block";
-                if(val == "1" || val == "0") { arText.innerHTML = "🚧 Modèle Filaire"; arText.style.color = "#FFD54F"; }
-                else if(val == "2") { arText.innerHTML = "📦 Aperçu Virtuel"; arText.style.color = "#FF9800"; }
-                else if(val == "3") { arText.innerHTML = "✅ Rendu Réaliste"; arText.style.color = "#81C784"; }
+                cameraHeaderText.innerHTML = "Mode AR : Projection Client";
+                var currentStatus = document.getElementById("lfc-status-select").value;
+                arDynamicStatus.style.display = "block";
+                
+                if(currentStatus === "1" || currentStatus === "0") {
+                    arDynamicStatus.innerHTML = "🚧 Modèle Filaire<br><span style='font-size:12px; font-weight:300;'>Finitions en cours de fabrication</span>";
+                    arDynamicStatus.style.color = "#FFD54F"; 
+                } else if(currentStatus === "2") {
+                    arDynamicStatus.innerHTML = "📦 Aperçu Virtuel<br><span style='font-size:12px; font-weight:300;'>Habillages en cours d'expédition</span>";
+                    arDynamicStatus.style.color = "#FF9800"; 
+                } else if(currentStatus === "3") {
+                    arDynamicStatus.innerHTML = "✅ Rendu Réaliste<br><span style='font-size:12px; font-weight:300;'>Simulation finale prête à la pose</span>";
+                    arDynamicStatus.style.color = "#81C784"; 
+                }
             }
             
             modal.style.display = "flex";
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(stream => { currentStream = stream; video.srcObject = stream; })
-            .catch(err => { console.error(err); alert("Caméra indisponible."); closeCamera(false); });
+
+            navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' } 
+            })
+            .then(function(stream) {
+                currentStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(function(error) {
+                console.error("Erreur d'accès à la caméra: ", error);
+                alert("Impossible d'ouvrir la caméra. Vérifiez les autorisations de votre navigateur.");
+                closeCamera(false);
+            });
         }
 
         function closeCamera(success) {
-            if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
-            document.getElementById("camera-modal").style.display = "none";
+            const modal = document.getElementById("camera-modal");
+            
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+            
+            modal.style.display = "none";
 
-            if (success && activeTargetId === 'scan-metreur') {
-                document.getElementById('scene3d').style.display = 'flex';
-                document.getElementById('3d-instruction').style.display = 'block';
+            if (success && activeTargetId && activeTargetId !== 'client-ar') {
+                const targetText = document.getElementById(activeTargetId);
+                targetText.style.display = "block";
+                targetText.innerHTML = "✓ Modélisation 3D validée. Précision : 1mm.";
+                targetText.style.color = "var(--text-dark)";
+                targetText.style.fontWeight = "500";
             }
         }
-        
-        // Init canvas width on load
-        setTimeout(resizeCanvas, 100);
     </script>
 </body>
 </html>
