@@ -51,10 +51,9 @@
             padding: 40px 0;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
-            position: relative; /* Nécessaire pour placer le bouton en haut à droite */
+            position: relative; 
         }
 
-        /* NOUVEAU : Bouton Mode Sombre */
         .dark-mode-toggle {
             position: absolute;
             top: 30px;
@@ -209,7 +208,17 @@
             border-bottom: 1px solid var(--text-dark);
         }
 
-        /* Option pour le menu déroulant en mode sombre */
+        /* === NOUVEAU : CSS pour grouper le champ adresse et le bouton GPS === */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
+        .input-group input {
+            flex-grow: 1;
+        }
+
         select option {
             background-color: var(--bg-white);
             color: var(--text-dark);
@@ -236,7 +245,7 @@
 
         .btn-accent {
             background-color: var(--text-dark);
-            color: var(--bg-light); /* Modifié pour s'adapter au mode sombre */
+            color: var(--bg-light); 
             border-color: var(--text-dark);
         }
 
@@ -450,7 +459,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--diagram-bg); /* Utilisé pour le mode sombre */
+            background-color: var(--diagram-bg);
         }
         .plan-line-v { position: absolute; width: 4px; height: 100%; background: var(--text-dark); }
         .plan-line-h { position: absolute; width: 100%; height: 4px; background: var(--text-dark); }
@@ -459,7 +468,7 @@
         .dim-h { position: absolute; left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
         .dim-angle { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 13px; color: var(--text-dark);}
         
-        body.dark-mode .dim-w, body.dark-mode .dim-h { color: #ff5252; } /* Plus clair en mode sombre */
+        body.dark-mode .dim-w, body.dark-mode .dim-h { color: #ff5252; } 
 
         .close-modal {
             position: absolute;
@@ -483,7 +492,7 @@
             width: 100%;
             height: 150px;
             border: 2px dashed var(--border-color);
-            background-color: var(--diagram-bg); /* S'adapte au mode sombre */
+            background-color: var(--diagram-bg); 
             cursor: crosshair;
             touch-action: none;
             border-radius: 5px;
@@ -513,7 +522,12 @@
                     <h3>Dossier Projet</h3>
                 </div>
                 <input type="text" id="clientName" placeholder="Maître d'ouvrage (Nom du client)">
-                <input type="text" id="clientAddress" placeholder="Lieu d'intervention">
+                
+                <div class="input-group">
+                    <input type="text" id="clientAddress" placeholder="Lieu d'intervention">
+                    <button class="action-btn" onclick="getLocation()" style="padding: 10px; margin: 0; width: 50px; border-radius: 5px;" title="Me localiser">📍</button>
+                </div>
+
                 <select>
                     <option>Nature des travaux...</option>
                     <option>Rénovation Globale</option>
@@ -672,18 +686,53 @@
     </div>
 
     <script>
-        // === NOUVEAU : GESTION DU MODE SOMBRE ===
+        // === GESTION DU MODE SOMBRE ===
         let isDarkMode = false;
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark-mode', isDarkMode);
             
-            // Change l'icône du bouton
             const toggleBtn = document.querySelector('.dark-mode-toggle');
             toggleBtn.innerHTML = isDarkMode ? '☀️' : '🌙';
 
-            // Met à jour la couleur du stylo de la signature
             ctx.strokeStyle = isDarkMode ? '#FFFFFF' : '#1A1A1A';
+        }
+
+        // === NOUVEAU : FONCTION DE GÉOLOCALISATION ===
+        function getLocation() {
+            const input = document.getElementById('clientAddress');
+            input.value = "Recherche satellite...";
+            
+            if (navigator.geolocation) {
+                // Demande la position de l'appareil
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        // Utilisation d'une API publique (OpenStreetMap) pour transformer les coordonnées en adresse (Reverse Geocoding)
+                        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data && data.address) {
+                                let road = data.address.road || '';
+                                let city = data.address.city || data.address.town || data.address.village || '';
+                                input.value = `📍 ${road}, ${city}`.trim();
+                            } else {
+                                input.value = `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                            }
+                        }).catch(() => {
+                            input.value = `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        });
+                    }, 
+                    (error) => {
+                        // En cas de refus ou d'erreur, on met une adresse locale par défaut pour la démo
+                        input.value = "📍 Mandelieu-La Napoule (Simulation)";
+                    }
+                );
+            } else {
+                input.value = "📍 GPS non supporté";
+            }
         }
 
         // === GESTION DES ONGLETS ===
@@ -699,7 +748,6 @@
             document.getElementById(moduleId).classList.add("active");
             event.currentTarget.classList.add("active");
 
-            // Redimensionne le canvas de signature quand l'onglet Poseur s'ouvre
             if (moduleId === 'poseur') {
                 setTimeout(resizeCanvas, 100);
             }
@@ -838,7 +886,6 @@
             canvas.height = canvas.offsetHeight;
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
-            // Utilise du blanc si on est en mode sombre, sinon du noir
             ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#1A1A1A';
         }
 
