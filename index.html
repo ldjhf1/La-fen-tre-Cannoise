@@ -205,6 +205,7 @@
             margin: 0 auto;
             background: var(--bg-light);
             text-align: center;
+            transition: all 0.3s ease;
         }
 
         .jauge {
@@ -216,10 +217,11 @@
         }
 
         .jauge-fill {
-            width: 60%;
+            width: 0%; /* Initialisé à 0 */
             background-color: var(--text-dark);
             height: 100%;
             position: relative;
+            transition: width 0.8s ease-in-out;
         }
 
         .jauge-fill::after {
@@ -239,7 +241,7 @@
             display: none;
         }
 
-        /* === Styles pour le Scanner Caméra (Nouvel ajout) === */
+        /* === Styles pour le Scanner Caméra === */
         #camera-modal {
             display: none;
             position: fixed;
@@ -264,7 +266,6 @@
             z-index: 1;
         }
 
-        /* Viseur / Interface AR par-dessus la vidéo */
         .ar-overlay {
             position: relative;
             z-index: 2;
@@ -273,10 +274,10 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Les 4 coins du viseur */
         .ar-overlay::before, .ar-overlay::after {
             content: ''; position: absolute; width: 40px; height: 40px; border-color: white; border-style: solid;
         }
@@ -286,7 +287,6 @@
         .ar-overlay-inner::before { content: ''; position: absolute; top: -2px; right: -2px; width: 40px; height: 40px; border: solid white; border-width: 3px 3px 0 0; }
         .ar-overlay-inner::after { content: ''; position: absolute; bottom: -2px; left: -2px; width: 40px; height: 40px; border: solid white; border-width: 0 0 3px 3px; }
 
-        /* Ligne laser qui balaye */
         .laser-line {
             width: 100%;
             height: 2px;
@@ -301,6 +301,22 @@
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { top: 100%; opacity: 0; }
+        }
+
+        /* Texte dynamique de réalité augmentée */
+        #ar-dynamic-status {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.4);
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            z-index: 3;
+            letter-spacing: 1px;
         }
 
         .camera-ui-bottom {
@@ -457,11 +473,11 @@
                     <button class="action-btn" onclick="alert('Clé d\'accès générée : LFC-89X2')">Générer clé d'accès</button>
                     <button class="action-btn btn-accent" onclick="alert('SMS envoyé au client avec le lien de suivi.')">Notifier le maître d'ouvrage</button>
                 </div>
-                <select>
-                    <option>Actualiser l'état d'avancement...</option>
-                    <option>1. Profilés en façonnage (Atelier)</option>
-                    <option>2. Contrôle qualité & Expédition</option>
-                    <option>3. Planification de l'intervention</option>
+                <select id="lfc-status-select" onchange="updateClientUI()">
+                    <option value="0">Actualiser l'état d'avancement...</option>
+                    <option value="1">1. Profilés en façonnage (Atelier)</option>
+                    <option value="2">2. Contrôle qualité & Expédition</option>
+                    <option value="3">3. Planification de l'intervention</option>
                 </select>
             </div>
 
@@ -472,9 +488,13 @@
                 </div>
                 <div class="phone-mockup">
                     <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px;">LFC Suivi</h4>
-                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">État : Façonnage en cours</p>
-                    <div class="jauge"><div class="jauge-fill"></div></div>
-                    <p style="font-size: 10px; color: var(--text-dark); text-align: right; margin-top: -20px;">60%</p>
+                    
+                    <p id="mobile-status-text" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">En attente de démarrage</p>
+                    
+                    <div class="jauge"><div id="mobile-jauge-fill" class="jauge-fill"></div></div>
+                    
+                    <p id="mobile-percent-text" style="font-size: 10px; color: var(--text-dark); text-align: right; margin-top: -20px;">0%</p>
+                    
                     <button class="action-btn btn-accent" style="width: 100%; margin: 20px 0 10px 0; font-size: 10px;" onclick="openCamera('client-ar')">Visualiser en AR (Réalité Augmentée)</button>
                 </div>
             </div>
@@ -484,12 +504,13 @@
 
     <div id="camera-modal">
         <button class="btn-close-camera" onclick="closeCamera(false)">&times;</button>
-        <p class="camera-text">Analyse topographique en cours...</p>
+        <p class="camera-text" id="camera-header-text">Analyse topographique en cours...</p>
         
         <video id="camera-stream" autoplay playsinline></video>
         
         <div class="ar-overlay">
             <div class="ar-overlay-inner"></div>
+            <div id="ar-dynamic-status" style="display: none;"></div>
             <div class="laser-line"></div>
         </div>
 
@@ -513,7 +534,7 @@
             event.currentTarget.classList.add("active");
         }
 
-        // Autres animations
+        // Animations boutons
         function initProject(btn) {
             var originalText = btn.innerHTML;
             btn.innerHTML = "Projet Initialisé ✓";
@@ -535,6 +556,34 @@
             }, 1000);
         }
 
+        /* === LOGIQUE DE MISE A JOUR DU STATUT CLIENT === */
+        function updateClientUI() {
+            var statusSelect = document.getElementById("lfc-status-select").value;
+            var statusText = document.getElementById("mobile-status-text");
+            var jaugeFill = document.getElementById("mobile-jauge-fill");
+            var percentText = document.getElementById("mobile-percent-text");
+
+            if(statusSelect === "1") {
+                statusText.innerHTML = "État : Façonnage en cours";
+                jaugeFill.style.width = "30%";
+                percentText.innerHTML = "30%";
+            } else if(statusSelect === "2") {
+                statusText.innerHTML = "État : Qualité & Expédition";
+                jaugeFill.style.width = "70%";
+                percentText.innerHTML = "70%";
+            } else if(statusSelect === "3") {
+                statusText.innerHTML = "État : Prêt à poser";
+                jaugeFill.style.width = "100%";
+                jaugeFill.style.backgroundColor = "#B8A892"; // Devient beige accent à 100%
+                percentText.innerHTML = "100%";
+            } else {
+                statusText.innerHTML = "En attente de démarrage";
+                jaugeFill.style.width = "0%";
+                jaugeFill.style.backgroundColor = "var(--text-dark)";
+                percentText.innerHTML = "0%";
+            }
+        }
+
         /* === GESTION DE LA CAMÉRA === */
         let currentStream = null;
         let activeTargetId = null;
@@ -543,11 +592,33 @@
             activeTargetId = targetId;
             const modal = document.getElementById("camera-modal");
             const video = document.getElementById("camera-stream");
+            const arDynamicStatus = document.getElementById("ar-dynamic-status");
+            const cameraHeaderText = document.getElementById("camera-header-text");
             
-            // Affiche l'interface caméra
+            // Réinitialisation de l'UI Caméra
+            arDynamicStatus.style.display = "none";
+            cameraHeaderText.innerHTML = "Analyse topographique en cours...";
+
+            // Si c'est le mode client AR, on affiche un message spécifique selon le statut
+            if(targetId === 'client-ar') {
+                cameraHeaderText.innerHTML = "Mode AR : Projection Client";
+                var currentStatus = document.getElementById("lfc-status-select").value;
+                arDynamicStatus.style.display = "block";
+                
+                if(currentStatus === "1" || currentStatus === "0") {
+                    arDynamicStatus.innerHTML = "🚧 Modèle Filaire<br><span style='font-size:12px; font-weight:300;'>Finitions en cours de fabrication</span>";
+                    arDynamicStatus.style.color = "#FFD54F"; // Jaune
+                } else if(currentStatus === "2") {
+                    arDynamicStatus.innerHTML = "📦 Aperçu Virtuel<br><span style='font-size:12px; font-weight:300;'>Habillages en cours d'expédition</span>";
+                    arDynamicStatus.style.color = "#FF9800"; // Orange
+                } else if(currentStatus === "3") {
+                    arDynamicStatus.innerHTML = "✅ Rendu Réaliste<br><span style='font-size:12px; font-weight:300;'>Simulation finale prête à la pose</span>";
+                    arDynamicStatus.style.color = "#81C784"; // Vert doux
+                }
+            }
+            
             modal.style.display = "flex";
 
-            // Demande l'accès à la caméra arrière (environment)
             navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: 'environment' } 
             })
@@ -565,16 +636,13 @@
         function closeCamera(success) {
             const modal = document.getElementById("camera-modal");
             
-            // Arrête le flux vidéo pour économiser la batterie
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
                 currentStream = null;
             }
             
-            // Cache l'interface
             modal.style.display = "none";
 
-            // Si l'utilisateur a cliqué sur "Valider l'acquisition"
             if (success && activeTargetId && activeTargetId !== 'client-ar') {
                 const targetText = document.getElementById(activeTargetId);
                 targetText.style.display = "block";
@@ -582,7 +650,7 @@
                 targetText.style.color = "var(--text-dark)";
                 targetText.style.fontWeight = "500";
             } else if (success && activeTargetId === 'client-ar') {
-                alert("Fin de la simulation de Réalité Augmentée.");
+                // On ne fait rien de spécial pour le client, ça ferme juste la vue
             }
         }
     </script>
