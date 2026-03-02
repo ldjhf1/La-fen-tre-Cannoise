@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fini-Pose 3D - La Fenêtre Cannoise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* === CSS : Le Design === */
+        :root {
+            --primary-color: #0056b3; /* Bleu pro */
+            --secondary-color: #ff7f50; /* Orange dynamique (bâtiment) */
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+        }
+
+        /* Système d'onglets (Tabs) */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: #ddd;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Contenu des modules */
+        .module-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .module-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cartes (Cards) pour chaque sous-section */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Boutons d'action internes */
+        .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background-color: #004494;
+        }
+
+        .alert-btn {
+            background-color: #e74c3c;
+        }
+
+        /* Formulaires basiques */
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Simulation de l'écran téléphone pour le client */
+        .phone-mockup {
+            border: 8px solid #333;
+            border-radius: 30px;
+            padding: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .jauge {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 10px;
+            height: 20px;
+            margin-bottom: 15px;
+        }
+
+        .jauge-fill {
+            width: 60%;
+            background-color: #2ecc71;
+            height: 100%;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Fini-Pose 3D 🛠️</h1>
+        <p>L'application zéro attente par La Fenêtre Cannoise</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openModule('metreur')">📏 Mod. 1 : Métreur</button>
+            <button class="tab-btn" onclick="openModule('poseur')">🪚 Mod. 2 : Poseur</button>
+            <button class="tab-btn" onclick="openModule('client')">📱 Mod. 3 : Client</button>
+        </div>
+
+        <div id="metreur" class="module-content active">
+            <h2>Interface "Métreur" - 1ère visite</h2>
+            
+            <div class="card">
+                <h3>👤 Dossier Client</h3>
+                <input type="text" placeholder="Nom du client (ex: Dupont)">
+                <input type="text" placeholder="Adresse du chantier">
+                <select>
+                    <option>Type de projet...</option>
+                    <option>Rénovation</option>
+                    <option>Dépose totale</option>
+                </select>
+                <button class="action-btn">Créer le chantier</button>
+            </div>
+
+            <div class="card">
+                <h3>📸 Acquisition des données</h3>
+                <button class="action-btn" onclick="simulateScan()">Activer la caméra LiDAR (Scan 3D)</button>
+                <p id="scan-result" style="display:none; color: green;">✅ Modélisation 3D générée en temps réel.</p>
+                <button class="action-btn alert-btn">Lire les alertes IA (Faux aplombs)</button>
+            </div>
+
+            <div class="card">
+                <h3>⚙️ Traitement & Commande</h3>
+                <select>
+                    <option>Sélectionner la gamme...</option>
+                    <option>Normabaie Innovax Alu</option>
+                    <option>VEKA Softline</option>
+                </select>
+                <button class="action-btn">Générer la nomenclature (Calcul IA)</button>
+                <button class="action-btn" style="background-color: var(--secondary-color);">Exporter la commande groupée (Prodevis)</button>
+            </div>
+        </div>
+
+        <div id="poseur" class="module-content">
+            <h2>Interface "Poseur" - Sur le chantier</h2>
+            
+            <div class="card">
+                <h3>📂 Suivi de Chantier</h3>
+                <select>
+                    <option>Ouvrir le dossier du chantier en cours...</option>
+                    <option>Client : Dupont - Rénovation Cannes</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <h3>📐 Vérification & Mesure</h3>
+                <button class="action-btn" onclick="alert('Scan du cadre en cours...')">Lancer le "Scan de Contrôle"</button>
+                <button class="action-btn">Générer le plan de coupe (Cotes exactes)</button>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Action & Communication</h3>
+                <button class="action-btn">Option A : Mode Découpe sur place</button>
+                <button class="action-btn" style="background-color: var(--secondary-color);">Option B : Commande en 1 clic (Atelier)</button>
+                <textarea rows="3" placeholder="Ajouter des notes pour l'atelier..."></textarea>
+                <button class="action-btn">Ajouter une photo du chantier</button>
+            </div>
+        </div>
+
+        <div id="client" class="module-content">
+            <h2>Interface "Réassurance" - Suivi des finitions</h2>
+            
+            <div class="card">
+                <h3>🏢 Côté La Fenêtre Cannoise (Entreprise)</h3>
+                <button class="action-btn">Générer un accès client sécurisé</button>
+                <button class="action-btn">Envoyer la notification (SMS/E-mail)</button>
+                <select>
+                    <option>Mettre à jour le statut...</option>
+                    <option>Habillages en cours de fabrication</option>
+                    <option>Habillages expédiés</option>
+                    <option>Rendez-vous de pose finale fixé</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <h3>🛋️ Côté Client (Simulation Smartphone)</h3>
+                <div class="phone-mockup">
+                    <h4 style="text-align: center; margin-top: 0;">Suivi de vos finitions</h4>
+                    <p style="font-size: 12px; color: gray;">Statut : Fabrication en cours</p>
+                    <div class="jauge">
+                        <div class="jauge-fill">60%</div>
+                    </div>
+                    <button class="action-btn" style="width: 100%; margin: 10px 0;">Activer la Réalité Augmentée (AR)</button>
+                    <button class="action-btn alert-btn" style="width: 100%; margin: 0;">Une question ? Nous contacter</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fonction pour changer d'onglet
+        function openModule(moduleId) {
+            // 1. Cacher tous les modules
+            var contents = document.getElementsByClassName("module-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            
+            // 2. Retirer la classe 'active' de tous les boutons
+            var btns = document.getElementsByClassName("tab-btn");
+            for (var j = 0; j < btns.length; j++) {
+                btns[j].classList.remove("active");
+            }
+            
+            // 3. Afficher le module sélectionné et mettre le bouton en surbrillance
+            document.getElementById(moduleId).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+
+        // Petite simulation amusante pour le LiDAR
+        function simulateScan() {
+            var result = document.getElementById("scan-result");
+            result.style.display = "block";
+            result.innerHTML = "⏳ Scan en cours... Analyse des faux aplombs...";
+            result.style.color = "orange";
+            
+            setTimeout(function() {
+                result.innerHTML = "✅ Modélisation 3D générée avec succès au millimètre près !";
+                result.style.color = "green";
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
