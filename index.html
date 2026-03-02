@@ -218,6 +218,9 @@
         .input-group input {
             flex-grow: 1;
         }
+        .input-group textarea {
+            flex-grow: 1;
+        }
 
         select option {
             background-color: var(--bg-white);
@@ -566,10 +569,10 @@
             letter-spacing: 1px;
         }
 
-        /* === NOUVEAU : CSS de la bannière d'installation "Fake PWA" === */
+        /* === CSS de la bannière d'installation "Fake PWA" === */
         .install-banner {
             position: fixed;
-            bottom: -100px; /* Cachée au début */
+            bottom: -100px; 
             left: 0;
             width: 100%;
             background-color: var(--bg-white);
@@ -590,7 +593,6 @@
 
         .install-info { display: flex; align-items: center; gap: 15px; }
 
-        /* Faux logo d'application */
         .install-logo {
             width: 45px;
             height: 45px;
@@ -740,7 +742,11 @@
                     <button class="action-btn" onclick="alert('Mode plein écran activé pour découpe sur site.')">Mode Façonnage (Sur site)</button>
                     <button class="action-btn btn-accent" onclick="alert('Commande envoyée à l\'atelier LFC !')">Requête Atelier (Commande 1 clic)</button>
                 </div>
-                <textarea rows="2" placeholder="Prescriptions techniques pour l'atelier..."></textarea>
+                
+                <div class="input-group" style="align-items: flex-start; margin-top: 15px;">
+                    <textarea id="poseur-notes" rows="2" placeholder="Prescriptions techniques pour l'atelier..." style="margin: 0;"></textarea>
+                    <button id="btn-dictate" class="action-btn" onclick="startDictation()" style="padding: 10px; margin: 0; width: 50px; border-radius: 5px; font-size: 16px;" title="Dicter vocalement">🎤</button>
+                </div>
             </div>
 
             <div class="card">
@@ -1128,11 +1134,60 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // === NOUVEAU : GESTION DE LA BANNIÈRE D'INSTALLATION ===
+        // === NOUVEAU : FONCTION DE DICTÉE VOCALE ===
+        function startDictation() {
+            const notesField = document.getElementById('poseur-notes');
+            const micBtn = document.getElementById('btn-dictate');
+
+            // Vérifie si le navigateur supporte la reconnaissance vocale
+            if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'fr-FR'; // Langue française
+
+                recognition.start();
+
+                // Change le bouton en rouge pendant l'écoute
+                micBtn.style.backgroundColor = '#D32F2F';
+                micBtn.style.color = '#FFFFFF';
+                micBtn.style.borderColor = '#D32F2F';
+                notesField.placeholder = "Écoute en cours (parlez maintenant)...";
+
+                recognition.onresult = function(e) {
+                    const transcript = e.results[0][0].transcript;
+                    // Ajoute un espace si du texte est déjà présent
+                    if(notesField.value) {
+                        notesField.value += " " + transcript;
+                    } else {
+                        notesField.value = transcript;
+                    }
+                    recognition.stop();
+                };
+
+                recognition.onerror = function(e) {
+                    recognition.stop();
+                    alert("Erreur de dictée : " + e.error + ". Assurez-vous d'avoir autorisé le microphone.");
+                };
+
+                recognition.onend = function() {
+                    // Remet le bouton à son état normal
+                    micBtn.style.backgroundColor = 'transparent';
+                    micBtn.style.color = 'var(--text-dark)';
+                    micBtn.style.borderColor = 'var(--text-dark)';
+                    notesField.placeholder = "Prescriptions techniques pour l'atelier...";
+                };
+
+            } else {
+                alert("Votre navigateur ne supporte pas la dictée vocale (Essayez avec Chrome ou Safari à jour).");
+            }
+        }
+
+        // === GESTION DE LA BANNIÈRE D'INSTALLATION ===
         window.onload = function() {
-            // Affiche la bannière d'installation après 1.5 secondes pour capter l'attention
             setTimeout(() => {
-                // On simule que la bannière n'apparaît que sur les écrans de type mobile (largeur < 768px)
                 if(window.innerWidth < 768) {
                     document.getElementById('install-banner').classList.add('show');
                 }
