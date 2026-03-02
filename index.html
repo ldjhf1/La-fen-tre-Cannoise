@@ -8,12 +8,29 @@
     <style>
         /* === CSS : Design Architectural Minimaliste === */
         :root {
+            /* Variables de base (Mode Clair) */
             --bg-light: #FAFAFA;
             --bg-white: #FFFFFF;
             --text-dark: #1A1A1A;
             --text-muted: #757575;
             --accent-color: #B8A892; 
             --border-color: #E0E0E0;
+            --diagram-bg: #f9f9f9;
+        }
+
+        /* Variables pour le Mode Sombre */
+        body.dark-mode {
+            --bg-light: #121212;
+            --bg-white: #1E1E1E;
+            --text-dark: #FFFFFF;
+            --text-muted: #A0A0A0;
+            --border-color: #333333;
+            --diagram-bg: #2C2C2C;
+        }
+
+        /* Transitions fluides pour le changement de thème */
+        body, .card, header, .modal-content, .phone-mockup, .plan-diagram, .signature-pad {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -34,6 +51,31 @@
             padding: 40px 0;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
+            position: relative; /* Nécessaire pour placer le bouton en haut à droite */
+        }
+
+        /* NOUVEAU : Bouton Mode Sombre */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: var(--text-dark);
+            color: var(--bg-white);
         }
 
         header h1 {
@@ -159,12 +201,18 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             color: var(--text-dark);
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, color 0.3s ease;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-bottom: 1px solid var(--text-dark);
+        }
+
+        /* Option pour le menu déroulant en mode sombre */
+        select option {
+            background-color: var(--bg-white);
+            color: var(--text-dark);
         }
 
         .action-btn {
@@ -188,13 +236,14 @@
 
         .btn-accent {
             background-color: var(--text-dark);
-            color: var(--bg-white);
+            color: var(--bg-light); /* Modifié pour s'adapter au mode sombre */
             border-color: var(--text-dark);
         }
 
         .btn-accent:hover {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
+            color: #FFFFFF;
         }
 
         .phone-mockup {
@@ -205,7 +254,6 @@
             margin: 0 auto;
             background: var(--bg-light);
             text-align: center;
-            transition: all 0.3s ease;
         }
 
         .jauge {
@@ -402,7 +450,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f9f9f9;
+            background-color: var(--diagram-bg); /* Utilisé pour le mode sombre */
         }
         .plan-line-v { position: absolute; width: 4px; height: 100%; background: var(--text-dark); }
         .plan-line-h { position: absolute; width: 100%; height: 4px; background: var(--text-dark); }
@@ -411,6 +459,8 @@
         .dim-h { position: absolute; left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
         .dim-angle { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 13px; color: var(--text-dark);}
         
+        body.dark-mode .dim-w, body.dark-mode .dim-h { color: #ff5252; } /* Plus clair en mode sombre */
+
         .close-modal {
             position: absolute;
             top: 15px;
@@ -422,7 +472,7 @@
             border: none;
         }
 
-        /* === NOUVEAU : CSS de la Zone de Signature === */
+        /* === CSS de la Zone de Signature === */
         .signature-container {
             width: 100%;
             display: flex;
@@ -433,9 +483,9 @@
             width: 100%;
             height: 150px;
             border: 2px dashed var(--border-color);
-            background-color: var(--bg-light);
+            background-color: var(--diagram-bg); /* S'adapte au mode sombre */
             cursor: crosshair;
-            touch-action: none; /* Empêche l'écran de scroller quand on signe */
+            touch-action: none;
             border-radius: 5px;
         }
     </style>
@@ -443,6 +493,8 @@
 <body>
 
     <header>
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Changer le thème">🌙</button>
+        
         <h1>Fini-Pose 3D</h1>
         <p>Studio La Fenêtre Cannoise</p>
     </header>
@@ -569,7 +621,7 @@
                     <h3 style="text-align: center;">Vue Interface Mobile (Client)</h3>
                 </div>
                 <div class="phone-mockup">
-                    <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px;">LFC Suivi</h4>
+                    <h4 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px; color: var(--text-dark);">LFC Suivi</h4>
                     
                     <p id="mobile-status-text" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">En attente de démarrage</p>
                     
@@ -620,6 +672,20 @@
     </div>
 
     <script>
+        // === NOUVEAU : GESTION DU MODE SOMBRE ===
+        let isDarkMode = false;
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            
+            // Change l'icône du bouton
+            const toggleBtn = document.querySelector('.dark-mode-toggle');
+            toggleBtn.innerHTML = isDarkMode ? '☀️' : '🌙';
+
+            // Met à jour la couleur du stylo de la signature
+            ctx.strokeStyle = isDarkMode ? '#FFFFFF' : '#1A1A1A';
+        }
+
         // === GESTION DES ONGLETS ===
         function openModule(moduleId) {
             var contents = document.getElementsByClassName("module-content");
@@ -644,7 +710,7 @@
             var originalText = btn.innerHTML;
             btn.innerHTML = "Projet Initialisé ✓";
             btn.style.backgroundColor = "var(--text-dark)";
-            btn.style.color = "var(--bg-white)";
+            btn.style.color = "var(--bg-light)";
             setTimeout(function() {
                 btn.innerHTML = originalText;
                 btn.style.backgroundColor = "transparent";
@@ -762,21 +828,20 @@
             }
         }
 
-        // === NOUVEAU : GESTION DE LA SIGNATURE TACTILE ===
+        // === GESTION DE LA SIGNATURE TACTILE ===
         const canvas = document.getElementById('sigCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
 
-        // Fonction pour ajuster la taille du dessin à la taille réelle de l'écran
         function resizeCanvas() {
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
-            ctx.strokeStyle = '#1A1A1A'; // Couleur de l'encre (Noire)
+            // Utilise du blanc si on est en mode sombre, sinon du noir
+            ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#1A1A1A';
         }
 
-        // Event listener pour redimensionner si l'utilisateur tourne son téléphone
         window.addEventListener('resize', resizeCanvas);
 
         function startDrawing(e) {
@@ -791,13 +856,12 @@
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault(); // Empêche de scroller la page sur mobile
+            e.preventDefault(); 
             
             const rect = canvas.getBoundingClientRect();
             let clientX = e.clientX;
             let clientY = e.clientY;
 
-            // Gestion du tactile (doigt sur smartphone)
             if (e.touches && e.touches.length > 0) {
                 clientX = e.touches[0].clientX;
                 clientY = e.touches[0].clientY;
@@ -812,18 +876,15 @@
             ctx.moveTo(x, y);
         }
 
-        // Événements Souris (Ordinateur)
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseout', stopDrawing);
 
-        // Événements Tactiles (Smartphone/Tablette)
         canvas.addEventListener('touchstart', startDrawing, {passive: false});
         canvas.addEventListener('touchmove', draw, {passive: false});
         canvas.addEventListener('touchend', stopDrawing);
 
-        // Fonction pour nettoyer la signature
         function clearSignature() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
