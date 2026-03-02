@@ -8,7 +8,6 @@
     <style>
         /* === CSS : Design Architectural Minimaliste === */
         :root {
-            /* Variables de base (Mode Clair) */
             --bg-light: #FAFAFA;
             --bg-white: #FFFFFF;
             --text-dark: #1A1A1A;
@@ -18,7 +17,6 @@
             --diagram-bg: #f9f9f9;
         }
 
-        /* Variables pour le Mode Sombre */
         body.dark-mode {
             --bg-light: #121212;
             --bg-white: #1E1E1E;
@@ -28,7 +26,6 @@
             --diagram-bg: #2C2C2C;
         }
 
-        /* Transitions fluides pour le changement de thème */
         body, .card, header, .modal-content, .phone-mockup, .plan-diagram, .signature-pad {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
@@ -208,7 +205,6 @@
             border-bottom: 1px solid var(--text-dark);
         }
 
-        /* === NOUVEAU : CSS pour grouper le champ adresse et le bouton GPS === */
         .input-group {
             display: flex;
             gap: 10px;
@@ -497,6 +493,78 @@
             touch-action: none;
             border-radius: 5px;
         }
+
+        /* === NOUVEAU : CSS DU MODÈLE 3D === */
+        .scene-3d {
+            width: 100%;
+            height: 200px;
+            perspective: 600px;
+            display: none; /* Caché par défaut, apparaîtra après le scan */
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            cursor: grab;
+            background-color: var(--diagram-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px dashed var(--border-color);
+        }
+        .scene-3d:active { cursor: grabbing; }
+
+        .cube {
+            width: 100px;
+            height: 150px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-15deg) rotateY(-20deg);
+            transition: transform 0.1s;
+        }
+
+        .face {
+            position: absolute;
+            border: 3px solid var(--text-dark);
+            background: rgba(184, 168, 146, 0.3); /* Beige semi-transparent */
+            box-sizing: border-box;
+        }
+
+        /* Construction de la fenêtre 3D */
+        .face-front, .face-back { width: 100px; height: 150px; }
+        .face-left, .face-right { width: 30px; height: 150px; left: 35px; } 
+        .face-top, .face-bottom { width: 100px; height: 30px; top: 60px; } 
+
+        /* Placement dans l'espace 3D */
+        .face-front  { transform: translateZ(15px); }
+        .face-back   { transform: rotateY(180deg) translateZ(15px); }
+        .face-left   { transform: rotateY(-90deg) translateZ(50px); }
+        .face-right  { transform: rotateY(90deg) translateZ(50px); }
+        .face-top    { transform: rotateX(90deg) translateZ(75px); }
+        .face-bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+        /* Le montant central (Meneau) */
+        .mullion {
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            background: var(--text-dark);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Mode sombre pour la 3D */
+        body.dark-mode .face { border-color: #FFFFFF; background: rgba(215, 204, 200, 0.15); }
+        body.dark-mode .mullion { background: #FFFFFF; }
+        
+        #instruction-3d {
+            display: none;
+            font-size: 11px;
+            text-align: center;
+            color: var(--accent-color);
+            margin-top: -10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -542,7 +610,19 @@
                     <h3>Acquisition Spatiale (LiDAR)</h3>
                 </div>
                 <button class="action-btn btn-accent" onclick="openCamera('scan-result-metreur')">Lancer le Scan 3D</button>
+                
                 <p id="scan-result-metreur" class="result-text"></p>
+                <div id="scene3d" class="scene-3d">
+                    <div class="cube" id="cube">
+                        <div class="face face-front"><div class="mullion"></div></div>
+                        <div class="face face-back"><div class="mullion"></div></div>
+                        <div class="face face-left"></div>
+                        <div class="face face-right"></div>
+                        <div class="face face-top"></div>
+                        <div class="face face-bottom"></div>
+                    </div>
+                </div>
+                <p id="instruction-3d">Faites glisser pour pivoter le modèle</p>
                 <button class="action-btn" onclick="alert('Aucun faux aplomb détecté sur ce mur.')" style="border-color: #D32F2F; color: #D32F2F;">Consulter les anomalies</button>
             </div>
 
@@ -698,19 +778,15 @@
             ctx.strokeStyle = isDarkMode ? '#FFFFFF' : '#1A1A1A';
         }
 
-        // === NOUVEAU : FONCTION DE GÉOLOCALISATION ===
+        // === FONCTION DE GÉOLOCALISATION ===
         function getLocation() {
             const input = document.getElementById('clientAddress');
             input.value = "Recherche satellite...";
-            
             if (navigator.geolocation) {
-                // Demande la position de l'appareil
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        
-                        // Utilisation d'une API publique (OpenStreetMap) pour transformer les coordonnées en adresse (Reverse Geocoding)
                         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
                         .then(res => res.json())
                         .then(data => {
@@ -721,18 +797,11 @@
                             } else {
                                 input.value = `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                             }
-                        }).catch(() => {
-                            input.value = `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-                        });
+                        }).catch(() => { input.value = `📍 GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`; });
                     }, 
-                    (error) => {
-                        // En cas de refus ou d'erreur, on met une adresse locale par défaut pour la démo
-                        input.value = "📍 Mandelieu-La Napoule (Simulation)";
-                    }
+                    (error) => { input.value = "📍 Mandelieu-La Napoule (Simulation)"; }
                 );
-            } else {
-                input.value = "📍 GPS non supporté";
-            }
+            } else { input.value = "📍 GPS non supporté"; }
         }
 
         // === GESTION DES ONGLETS ===
@@ -775,7 +844,6 @@
             }, 1000);
         }
 
-        // === PLAN DE COUPE ALÉATOIRE ===
         function showPlan() {
             const w = Math.floor(Math.random() * (1800 - 800) + 800);
             const h = Math.floor(Math.random() * (2500 - 1000) + 1000);
@@ -867,14 +935,59 @@
             }
             modal.style.display = "none";
 
-            if (success && activeTargetId && activeTargetId !== 'client-ar') {
+            // Si on valide le scan depuis le module Métreur, on affiche le bloc 3D
+            if (success && activeTargetId === 'scan-result-metreur') {
                 const targetText = document.getElementById(activeTargetId);
                 targetText.style.display = "block";
                 targetText.innerHTML = "✓ Modélisation 3D validée. Précision : 1mm.";
                 targetText.style.color = "var(--text-dark)";
                 targetText.style.fontWeight = "500";
+
+                // Affichage du module 3D
+                document.getElementById('scene3d').style.display = 'flex';
+                document.getElementById('instruction-3d').style.display = 'block';
+            } else if (success && activeTargetId === 'scan-result-poseur') {
+                const targetText = document.getElementById(activeTargetId);
+                targetText.style.display = "block";
+                targetText.innerHTML = "✓ Cadre scanné.";
             }
         }
+
+        // === NOUVEAU : GESTION DE LA FENÊTRE 3D TACTILE ===
+        let isDragging3D = false;
+        let prevPos3D = { x: 0, y: 0 };
+        let rot3D = { x: -15, y: -20 };
+        const cube = document.getElementById('cube');
+        const scene3d = document.getElementById('scene3d');
+
+        function startDrag3D(e) {
+            isDragging3D = true;
+            prevPos3D = { x: e.pageX || (e.touches ? e.touches[0].pageX : 0), y: e.pageY || (e.touches ? e.touches[0].pageY : 0) };
+        }
+
+        function drag3D(e) {
+            if (!isDragging3D) return;
+            e.preventDefault(); // Empêche de scroller la page quand on tourne le cube
+            const currentPos = { x: e.pageX || (e.touches ? e.touches[0].pageX : 0), y: e.pageY || (e.touches ? e.touches[0].pageY : 0) };
+            const delta = { x: currentPos.x - prevPos3D.x, y: currentPos.y - prevPos3D.y };
+            
+            // Ajustement de la vitesse de rotation
+            rot3D.y += delta.x * 0.6;
+            rot3D.x -= delta.y * 0.6;
+            
+            cube.style.transform = `rotateX(${rot3D.x}deg) rotateY(${rot3D.y}deg)`;
+            prevPos3D = currentPos;
+        }
+
+        function stopDrag3D() { isDragging3D = false; }
+
+        scene3d.addEventListener('mousedown', startDrag3D);
+        window.addEventListener('mousemove', drag3D);
+        window.addEventListener('mouseup', stopDrag3D);
+        scene3d.addEventListener('touchstart', startDrag3D, {passive: false});
+        window.addEventListener('touchmove', drag3D, {passive: false});
+        window.addEventListener('touchend', stopDrag3D);
+
 
         // === GESTION DE LA SIGNATURE TACTILE ===
         const canvas = document.getElementById('sigCanvas');
