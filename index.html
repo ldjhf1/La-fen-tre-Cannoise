@@ -371,7 +371,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* === NOUVEAU : CSS de la Modale Plan de Coupe === */
+        /* === Styles de la Modale Plan de Coupe === */
         .modal-plan {
             display: none;
             position: fixed;
@@ -404,11 +404,9 @@
             align-items: center;
             background-color: #f9f9f9;
         }
-        /* Montants de la fenêtre */
         .plan-line-v { position: absolute; width: 4px; height: 100%; background: var(--text-dark); }
         .plan-line-h { position: absolute; width: 100%; height: 4px; background: var(--text-dark); }
         
-        /* Cotes */
         .dim-w { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
         .dim-h { position: absolute; left: -60px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 600; font-family: monospace; font-size: 15px; color: #D32F2F;}
         .dim-angle { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-weight: 600; font-family: monospace; font-size: 13px; color: var(--text-dark);}
@@ -422,6 +420,23 @@
             color: var(--text-dark);
             background: none;
             border: none;
+        }
+
+        /* === NOUVEAU : CSS de la Zone de Signature === */
+        .signature-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .signature-pad {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed var(--border-color);
+            background-color: var(--bg-light);
+            cursor: crosshair;
+            touch-action: none; /* Empêche l'écran de scroller quand on signe */
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -513,6 +528,21 @@
                 </div>
                 <textarea rows="2" placeholder="Prescriptions techniques pour l'atelier..."></textarea>
             </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="step-number">IV.</span>
+                    <h3>Signature & Validation</h3>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Validation du bon de réception et des mesures (Client ou Chef d'équipe) :</p>
+                <div class="signature-container">
+                    <canvas id="sigCanvas" class="signature-pad"></canvas>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="action-btn" onclick="clearSignature()" style="border-color: #D32F2F; color: #D32F2F;">Effacer</button>
+                        <button class="action-btn btn-accent" onclick="alert('Signature cryptée et enregistrée. Le dossier est verrouillé.')">Valider la signature</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="client" class="module-content">
@@ -590,7 +620,7 @@
     </div>
 
     <script>
-        // Gestion des onglets
+        // === GESTION DES ONGLETS ===
         function openModule(moduleId) {
             var contents = document.getElementsByClassName("module-content");
             for (var i = 0; i < contents.length; i++) {
@@ -602,9 +632,14 @@
             }
             document.getElementById(moduleId).classList.add("active");
             event.currentTarget.classList.add("active");
+
+            // Redimensionne le canvas de signature quand l'onglet Poseur s'ouvre
+            if (moduleId === 'poseur') {
+                setTimeout(resizeCanvas, 100);
+            }
         }
 
-        // Animations boutons
+        // === ANIMATIONS DES BOUTONS ===
         function initProject(btn) {
             var originalText = btn.innerHTML;
             btn.innerHTML = "Projet Initialisé ✓";
@@ -626,21 +661,16 @@
             }, 1000);
         }
 
-        // NOUVEAU : Fonction Plan de Coupe Aléatoire
+        // === PLAN DE COUPE ALÉATOIRE ===
         function showPlan() {
-            // Génère une largeur entre 800 et 1800
             const w = Math.floor(Math.random() * (1800 - 800) + 800);
-            // Génère une hauteur entre 1000 et 2500
             const h = Math.floor(Math.random() * (2500 - 1000) + 1000);
-            
             document.getElementById('dim-w').innerText = "L: " + w + " mm";
             document.getElementById('dim-h').innerText = "H: " + h + " mm";
-            
-            // Affiche la pop-up
             document.getElementById('modal-plan').style.display = 'flex';
         }
 
-        /* === LOGIQUE DE MISE A JOUR DU STATUT CLIENT === */
+        // === LOGIQUE DE MISE A JOUR DU STATUT CLIENT ===
         function updateClientUI() {
             var statusSelect = document.getElementById("lfc-status-select").value;
             var statusText = document.getElementById("mobile-status-text");
@@ -658,7 +688,7 @@
             } else if(statusSelect === "3") {
                 statusText.innerHTML = "État : Prêt à poser";
                 jaugeFill.style.width = "100%";
-                jaugeFill.style.backgroundColor = "#B8A892"; // Devient beige accent à 100%
+                jaugeFill.style.backgroundColor = "#B8A892";
                 percentText.innerHTML = "100%";
             } else {
                 statusText.innerHTML = "En attente de démarrage";
@@ -668,7 +698,7 @@
             }
         }
 
-        /* === GESTION DE LA CAMÉRA === */
+        // === GESTION DE LA CAMÉRA ===
         let currentStream = null;
         let activeTargetId = null;
 
@@ -717,12 +747,10 @@
 
         function closeCamera(success) {
             const modal = document.getElementById("camera-modal");
-            
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
                 currentStream = null;
             }
-            
             modal.style.display = "none";
 
             if (success && activeTargetId && activeTargetId !== 'client-ar') {
@@ -732,6 +760,72 @@
                 targetText.style.color = "var(--text-dark)";
                 targetText.style.fontWeight = "500";
             }
+        }
+
+        // === NOUVEAU : GESTION DE LA SIGNATURE TACTILE ===
+        const canvas = document.getElementById('sigCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        // Fonction pour ajuster la taille du dessin à la taille réelle de l'écran
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#1A1A1A'; // Couleur de l'encre (Noire)
+        }
+
+        // Event listener pour redimensionner si l'utilisateur tourne son téléphone
+        window.addEventListener('resize', resizeCanvas);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // Empêche de scroller la page sur mobile
+            
+            const rect = canvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            // Gestion du tactile (doigt sur smartphone)
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Événements Souris (Ordinateur)
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Événements Tactiles (Smartphone/Tablette)
+        canvas.addEventListener('touchstart', startDrawing, {passive: false});
+        canvas.addEventListener('touchmove', draw, {passive: false});
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Fonction pour nettoyer la signature
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     </script>
 </body>
